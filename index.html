@@ -3303,6 +3303,7 @@ html[data-visual-theme] .panel-head .helper,html[data-visual-theme] .panel-head 
 html[data-visual-theme] .attr-card.over .attr-cap{color:#a23d4a}
 @media(max-width:760px){html[data-visual-theme] .app{transition:none}}
 </style>
+<link rel="stylesheet" href="systems.css">
 
 <script>
 (function(){
@@ -4768,7 +4769,7 @@ function closeThemePicker(focus=false){$('#themePicker').hidden=true;$('#visualT
 function toggleVisualTheme(){const show=$('#themePicker').hidden;$('#themePicker').hidden=!show;$('#visualThemeBtn').setAttribute('aria-expanded',String(show));if(show)$('#themePicker input:checked').focus()}
 $('#visualThemeBtn').onclick=toggleVisualTheme;
 $('.theme-close').onclick=()=>closeThemePicker(true);
-$('#themePicker').addEventListener('change',e=>{if(e.target.name==='visual-theme'){applyVisualTheme(e.target.value);closeThemePicker(true);toast('Tema '+VISUAL_THEMES[e.target.value].name+' ativado.','good')}});
+$('#themePicker').addEventListener('change',e=>{if(e.target.name==='visual-theme'){applyVisualTheme(e.target.value);closeThemePicker(true);toast('Modalidade '+VISUAL_THEMES[e.target.value].name+' ativada.','good')}});
 document.addEventListener('click',e=>{if(!$('#themePicker').hidden&&!$('#themePicker').contains(e.target)&&!$('#visualThemeBtn').contains(e.target))closeThemePicker()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#themePicker').hidden){e.preventDefault();closeThemePicker(true)}});
 applyVisualTheme(currentVisualTheme(),false);
@@ -5909,7 +5910,7 @@ itemModal=function(type,i=null){
   };
   $('#iSave').onclick=()=>{
     syncItemEditorEffects();
-    const x={name:$('#iName').value||'Item',meta:$('#iMeta').value,desc:$('#iDesc').value,equipped:$('#iEquipped').checked,effects:itemEditorEffects};
+    const x={...old,name:$('#iName').value||'Item',meta:$('#iMeta').value,desc:$('#iDesc').value,equipped:$('#iEquipped').checked,effects:itemEditorEffects};
     if(i===null)current().items[type].push(x);else current().items[type][i]=x;
     closeModal();renderItems();renderAttrs();renderResources();renderDerived();renderCombat();scheduleSave()
   }
@@ -6854,10 +6855,12 @@ renderAll=function(){
 
 updateAbilityCostPreview();
 
-renderBuilderMods();load();
+// Boot follows the mode-specific modules below.
 // Keep drawers and sticky rune details aligned when the toolbar wraps.
 if(typeof ResizeObserver!=='undefined')new ResizeObserver(entries=>{document.documentElement.style.setProperty('--top',entries[0].target.getBoundingClientRect().height+'px')}).observe(document.querySelector('.topbar'));
 
 </script>
+<script src="systems.js"></script>
+<script>renderBuilderMods();load();</script>
 </body>
 </html>

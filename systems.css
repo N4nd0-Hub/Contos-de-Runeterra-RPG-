@@ -1,0 +1,285 @@
+/* Different silhouettes and page structures for each sheet modality. */
+html[data-visual-theme] .attribute-frame{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;fill:none;stroke:currentColor;stroke-width:1;z-index:0}
+html[data-visual-theme] .attr-card>*:not(.attribute-frame){position:relative;z-index:1}
+html[data-visual-theme] .attr-card{isolation:isolate;overflow:visible}
+html[data-visual-theme] .attribute-frame .facet-fill{fill:#ead6a8;stroke:none}
+html[data-visual-theme] .attribute-frame .facet-outline{stroke:#8b6937;stroke-width:2.1}
+html[data-visual-theme] .attribute-frame .facet-lines{stroke:#aa8750;stroke-width:.9;opacity:.45}
+html[data-visual-theme] .attribute-frame .facet-inlay{stroke:#c5a874;stroke-width:.7}
+html[data-visual-theme="classic"] .attr-grid{gap:15px}
+html[data-visual-theme="classic"] .attr-card{min-height:248px;padding:38px 17px 30px;border:0;border-radius:0;background:transparent;box-shadow:none;filter:drop-shadow(0 4px 4px #573c1c15)}
+html[data-visual-theme="classic"] .attr-card:hover{background:transparent;filter:drop-shadow(0 3px 4px #77512730)}
+html[data-visual-theme="classic"] .attr-card:hover .facet-outline{stroke:var(--ui-accent);stroke-width:2.6}
+html[data-visual-theme="classic"] .attr-card .attr-rune-mark{width:22px;height:22px;margin-bottom:5px}
+html[data-visual-theme="classic"] .attr-card .attr-rune-mark .ui-symbol{width:20px;height:20px}
+html[data-visual-theme="classic"] .attr-code{font-size:14px}
+html[data-visual-theme="classic"] .attr-name{font-size:10px}
+html[data-visual-theme="classic"] .attr-total-num{font-family:Cinzel,Georgia,serif;font-size:32px;margin:7px 0 8px}
+html[data-visual-theme="classic"] .attr-source-line{font-size:9px;min-height:20px;margin:0 0 5px;flex:0}
+html[data-visual-theme="classic"] .attr-edit-btn{background:#f0e1bfbd;font-size:9px;min-height:25px;padding:4px 8px}
+html[data-visual-theme="classic"] .attr-cap{font-size:9px;margin-top:5px}
+html[data-visual-theme="classic"] .page-seal{border-radius:0;transform:rotate(45deg);background:linear-gradient(135deg,#efe2be,#dfc491);border:1px solid #a58148;box-shadow:inset 0 0 0 4px #eeddb3}
+html[data-visual-theme="classic"] .page-seal .ui-symbol{transform:rotate(-45deg)}
+html[data-visual-theme="classic"] .panel{border-radius:1px;border-top:3px double #9e7a43}
+html[data-visual-theme="classic"] .panel:after{display:block;inset:5px;border:1px solid #ac8d5426}
+html[data-visual-theme="classic"] .sheet{border:3px double #9f7d46;background:linear-gradient(90deg,#dfcda5,#ecdfbd 10%,#e9d9b3 90%,#dac294);border-radius:2px}
+html[data-visual-theme="classic"] .tab{font-family:Cinzel,Georgia,serif;font-size:11px;letter-spacing:.015em}
+html[data-visual-theme="classic"] .tab.active{background:linear-gradient(180deg,#d7ddc3,#bbc8aa55);border-bottom-color:#42685b}
+/* Battle Academia: hard corners, blueprints and illuminated status displays. */
+html[data-visual-theme="battle-academia"]{--ui-radius:2px;--ui-paper:#e1ebf7;--ui-accent:#126d9e;--ui-edge:#8faccc}
+html[data-visual-theme="battle-academia"] .sheet{border:1px solid #7bb3de;box-shadow:8px 8px 0 #10284973;background:linear-gradient(135deg,#d7e5f5,#edf4fb);border-radius:0}
+html[data-visual-theme="battle-academia"] .sheet-head{border-top:4px solid #3dc8e9;background:linear-gradient(100deg,#f6faff,#e1edf8)}
+html[data-visual-theme="battle-academia"] .page-intro{border-bottom:2px solid #a1bdd7;background:linear-gradient(90deg,#c4d9eb55,transparent);padding-left:8px}
+html[data-visual-theme="battle-academia"] .page-seal{border:1px solid #3799d5;border-radius:0;background:#14304f;color:#5bdaef;box-shadow:3px 3px 0 #aac8df}
+html[data-visual-theme="battle-academia"] .panel{border-radius:0;border-top:3px solid #328cca;box-shadow:3px 4px 0 #b5cbe040}
+html[data-visual-theme="battle-academia"] .panel-head{background:linear-gradient(90deg,#dbe9f7,#f2f7fc);border-bottom-color:#b1c6db}
+html[data-visual-theme="battle-academia"] .attr-grid{gap:13px}
+html[data-visual-theme="battle-academia"] .attr-card{min-height:248px;border:1px solid #85b3d8;border-radius:0;padding:28px 12px 20px;background:repeating-linear-gradient(0deg,#c5e5f31a 0 1px,transparent 1px 8px),linear-gradient(135deg,#f8fcff,#e1edf8);box-shadow:3px 4px 0 #144f7c13;color:#3d96c3}
+html[data-visual-theme="battle-academia"] .tech-attribute-frame{stroke:#277eaf;stroke-width:2}
+html[data-visual-theme="battle-academia"] .attr-rune-mark{margin-bottom:8px;color:#267aa7}
+html[data-visual-theme="battle-academia"] .attr-code{font:500 23px/1 Teko,Arial,sans-serif}
+html[data-visual-theme="battle-academia"] .attr-total-num{min-width:76px;min-height:46px;display:grid;place-items:center;border:1px solid #3baad6;background:linear-gradient(#132e4d,#0c203a);color:#98eaff;font:500 38px/1 Teko,Arial,sans-serif;padding:3px 8px;margin:10px auto 8px;text-shadow:0 0 8px #50c8ef66;box-shadow:inset 0 0 12px #249ad11f}
+html[data-visual-theme="battle-academia"] .attr-source-line{min-height:25px;font-size:10px}
+html[data-visual-theme="battle-academia"] .attr-edit-btn{font-size:10px;padding:5px 12px;background:#d2e5f5;color:#205e89;border-color:#7fafcf}
+html[data-visual-theme="battle-academia"] .attr-cap{font-size:10px}
+html[data-visual-theme="battle-academia"] .tab{border-right:1px solid #bbd2e6;transform:skew(-4deg);margin:0 2px}
+html[data-visual-theme="battle-academia"] .tab.active{background:#cfebfa;color:#11689d;border-bottom:3px solid #1387b8}
+html[data-visual-theme="battle-academia"] .brand-title{font-family:Teko,Arial,sans-serif;font-size:27px;letter-spacing:.08em}
+/* Star Guardian: literal star frames, celestial medallions and constellation surfaces. */
+html[data-visual-theme="star-guardian"]{--ui-radius:16px;--ui-paper:#ede6f7;--ui-accent:#8d477f;--ui-edge:#c9b3df}
+html[data-visual-theme="star-guardian"] .sheet{border-radius:26px 26px 12px 12px;border:1px solid #b79ccf;box-shadow:0 0 0 5px #d2b7e10b,0 22px 70px #0b062a66;background:radial-gradient(ellipse at 85% 18%,#fce4f65c,transparent 36%),#ede6f7}
+html[data-visual-theme="star-guardian"] .sheet-head{background:radial-gradient(ellipse at 85% 20%,#f5d8e86b,transparent 55%),#fbf8ff;border-top:3px solid #e8c5e3;border-bottom:1px solid #c6acd9}
+html[data-visual-theme="star-guardian"] .tabs{gap:6px;padding-bottom:9px}
+html[data-visual-theme="star-guardian"] .tab{min-height:42px;border:1px solid transparent;border-radius:22px;padding:10px 16px;font-size:12px;letter-spacing:0}
+html[data-visual-theme="star-guardian"] .tab.active{border:1px solid #c08fbc;background:#f1dcec;box-shadow:inset 0 0 0 2px #fff7fc66;color:#8d477f}
+html[data-visual-theme="star-guardian"] .page-intro{border-bottom:1px solid #ceb9e3;margin-bottom:4px}
+html[data-visual-theme="star-guardian"] .page-seal{width:52px;height:52px;border-radius:50%;background:radial-gradient(circle,#fff,#ead4ed);border:1px solid #c49bc9;box-shadow:0 0 0 5px #e1c9ec55}
+html[data-visual-theme="star-guardian"] .panel{border-radius:18px;border:1px solid #c8b2dc;box-shadow:0 5px 15px #5133670a;overflow:visible}
+html[data-visual-theme="star-guardian"] .panel:before{top:17px;left:0;height:22px;background:linear-gradient(#dd8fbf,#9a80c5)}
+html[data-visual-theme="star-guardian"] .panel-head{border-radius:18px 18px 0 0;background:linear-gradient(100deg,#f6eafa,#fcf8ff);border-bottom:1px solid #dfcce8}
+html[data-visual-theme="star-guardian"] .attr-grid{gap:10px 6px}
+html[data-visual-theme="star-guardian"] .attr-card{height:258px;min-height:258px;padding:60px 10px 40px;border:0;background:transparent;box-shadow:none;overflow:visible;border-radius:0}
+html[data-visual-theme="star-guardian"] .attr-card:hover{background:transparent;filter:drop-shadow(0 0 8px #c88bb43b)}
+html[data-visual-theme="star-guardian"] .star-attribute-frame{height:214px;inset:0 0 auto;color:#b47eae;filter:drop-shadow(0 4px 4px #865a9d13)}
+html[data-visual-theme="star-guardian"] .star-fill{fill:#f9eaf7;stroke:none}
+html[data-visual-theme="star-guardian"] .star-outline{stroke:#b67cab;stroke-width:1.8}
+html[data-visual-theme="star-guardian"] .star-inlay{stroke:#d7b4d7;stroke-width:.9}
+html[data-visual-theme="star-guardian"] .star-rays{stroke:#c893c3;opacity:.5;stroke-width:.8}
+html[data-visual-theme="star-guardian"] .attr-rune-mark{position:absolute!important;left:calc(50% - 11px);top:39px;width:22px;height:22px;color:#a2639c;display:grid}
+html[data-visual-theme="star-guardian"] .attr-rune-mark .ui-symbol{width:16px;height:16px;stroke-width:1.3}
+html[data-visual-theme="star-guardian"] .attr-code{margin:1px 0 0;font:600 14px/1.2 Marcellus,Georgia,serif;color:#5c3a6d}
+html[data-visual-theme="star-guardian"] .attr-name{font-size:9px;line-height:1.25;margin-top:4px;color:#806789}
+html[data-visual-theme="star-guardian"] .attr-total-num{font:500 31px/1.1 Marcellus,Georgia,serif;margin:7px 0;color:#593761;min-height:0;min-width:0}
+html[data-visual-theme="star-guardian"] .attr-source-line{position:absolute!important;left:5px;right:5px;bottom:45px;min-height:17px;margin:0;font-size:9px;color:#806789}
+html[data-visual-theme="star-guardian"] .attr-edit-btn{position:absolute!important;bottom:17px;min-height:25px;padding:4px 12px;border-radius:16px;background:#f5e7f6;border-color:#cbabd4;color:#95608e;font-size:9px}
+html[data-visual-theme="star-guardian"] .attr-cap{position:absolute!important;bottom:0;margin:0;font-size:9px;color:#8a7298}
+html[data-visual-theme="star-guardian"] .derived{border-radius:14px;background:#f8f1fc;border-color:#d5c1e3}
+html[data-visual-theme="star-guardian"] .resource-card{border-radius:14px;background:linear-gradient(135deg,#f8f0fc,#ede1f4);border-color:#d0b9df}
+html[data-visual-theme="star-guardian"] .brand-title{font:500 20px Marcellus,Georgia,serif;letter-spacing:.1em}
+html[data-visual-theme] .attr-card.over .attribute-frame{filter:drop-shadow(0 0 2px #b9494d)}
+html[data-visual-theme] .attr-card.over .facet-outline,html[data-visual-theme] .attr-card.over .star-outline{stroke:#bc555a}
+/* Academy armament and the merged technique/equipment page. */
+.academy-jump-nav{display:flex;gap:6px;margin:17px 22px 0;flex-wrap:wrap}
+.academy-jump-nav a{font:700 12px 'Barlow Condensed',Arial,sans-serif;text-transform:uppercase;letter-spacing:.05em;color:#3c7194;border:1px solid #a6c4dd;background:#e8f3fb;padding:8px 14px;text-decoration:none}
+.academy-jump-nav a:hover{background:#cde8f7;border-color:#308bb9}
+.academy-weapon-area{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(280px,.75fr);gap:18px;padding:20px 22px}
+.academy-weapon-card,.academy-evolution-card,.academy-technique-links{border:1px solid #85a9cb;background:linear-gradient(135deg,#f7fbff,#e9f1f9);color:#18344f;box-shadow:4px 5px 0 #1a4f7c12}
+.academy-card-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 17px;background:#132e4d;color:#88d9f0;font:700 11px 'Barlow Condensed',Arial,sans-serif;letter-spacing:.1em;border-top:3px solid #41c7e6}
+.academy-card-header .ui-symbol{width:20px;height:20px}
+.academy-weapon-hero{display:grid;grid-template-columns:1fr 1fr;min-height:390px}
+.academy-weapon-art{position:relative;min-height:390px;display:grid;place-items:center;padding:40px 20px 65px;background:linear-gradient(#193c5d44 1px,transparent 1px),linear-gradient(90deg,#193c5d44 1px,transparent 1px),radial-gradient(ellipse at 50% 40%,#1c4567,#0c1d34 75%);background-size:30px 30px,30px 30px,auto;overflow:hidden}
+.academy-weapon-art:before{content:"";position:absolute;inset:25px;border:1px solid #35799c88;pointer-events:none}
+.academy-weapon-art:after{content:"";position:absolute;width:200px;height:200px;border-radius:50%;border:1px dashed #45a5c544;pointer-events:none}
+.academy-weapon-art img{position:relative;z-index:1;width:100%;height:290px;object-fit:contain;filter:drop-shadow(0 15px 15px #031324aa)}
+.weapon-art-placeholder{display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;color:#6fc5e2;z-index:1}
+.weapon-art-placeholder>.ui-symbol{width:90px;height:90px;stroke-width:.9;transform:rotate(-12deg)}
+.weapon-art-placeholder small{font-size:10px;letter-spacing:.12em;color:#77a9c4;max-width:160px}
+.weapon-art-label{position:absolute;top:14px;left:14px;color:#7bd2ea;z-index:2;border:1px solid #34799c;background:#102d48;padding:5px 9px;font-size:10px;text-transform:uppercase;letter-spacing:.07em}
+.weapon-upload-label{position:absolute;bottom:15px;left:20px;right:20px;z-index:2;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid #3c8cae;background:#122f4be6;padding:9px;color:#99ddef;cursor:pointer;font-size:12px;font-weight:700}
+.weapon-upload-label:hover{background:#1d4c6c}
+.weapon-upload-label .ui-symbol{width:17px;height:17px}
+.academy-weapon-copy{padding:28px 23px;display:flex;flex-direction:column;align-items:flex-start;min-width:0}
+.academy-weapon-copy>small{font-size:10px;color:#5d819f;letter-spacing:.09em;font-weight:700}
+.academy-weapon-copy h2{font:500 36px/1.05 Teko,Arial,sans-serif;margin:10px 0 8px;color:#193a59;overflow-wrap:anywhere}
+.academy-weapon-type{font-size:12px;color:#3a81a7;border-left:2px solid #36add0;padding-left:8px}
+.academy-weapon-copy>p{font-size:14px;line-height:1.65;color:#5a7088;white-space:pre-wrap;overflow-wrap:anywhere}
+.weapon-technical-chips{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 18px}
+.weapon-technical-chips>span{display:flex;align-items:center;gap:5px;padding:5px 7px;border:1px solid #b2cadf;background:#e5f1fb;font-size:11px;color:#386183}
+.weapon-technical-chips .ui-symbol{width:14px;height:14px}
+.weapon-main-actions{margin-top:auto;display:flex;gap:7px;flex-wrap:wrap}
+.weapon-remove-image{font:500 11px 'Barlow Condensed',Arial,sans-serif;margin-top:12px;background:none;border:0;padding:0;color:#7c8da1;cursor:pointer;text-decoration:underline}
+.academy-weapon-switch{display:flex;align-items:center;gap:10px;padding:15px 18px;border-top:1px solid #b6ccdf;background:#dfebf7}
+.academy-weapon-switch label{font-size:11px;font-weight:700;white-space:nowrap;color:#4c6e8a}
+.academy-weapon-switch select{max-width:300px}
+.academy-evolution-card,.academy-technique-links{padding:20px}
+.academy-section-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:17px}
+.academy-evolution-card small,.academy-technique-links small{font-size:10px;letter-spacing:.09em;color:#6092b5}
+.academy-evolution-card h2,.academy-technique-links h2{font:500 25px/1.1 Teko,Arial,sans-serif;margin:5px 0 0;color:#234765}
+.academy-section-heading>.ui-symbol{color:#2c8bb6;width:25px;height:25px}
+.academy-evolution-card>p,.academy-technique-links>p{font-size:13px;color:#637c94;line-height:1.5}
+.weapon-evolution-track{display:flex;flex-direction:column;gap:0;margin-bottom:18px}
+.weapon-evolution-node{display:grid;grid-template-columns:27px minmax(0,1fr);gap:11px;position:relative;padding-bottom:22px}
+.weapon-evolution-node:not(:last-child):before{content:"";position:absolute;left:13px;top:27px;bottom:0;width:1px;background:#b1c9df}
+.evolution-number{display:grid;place-items:center;width:27px;height:27px;font-size:11px;font-weight:700;border:1px solid #9cbbd3;background:#e7f1f9;color:#6d8aa4}
+.weapon-evolution-node.active .evolution-number{background:#187caa;border-color:#1a8fbd;color:#b5efff;box-shadow:0 0 0 3px #52bae41a}
+.weapon-evolution-node small{font-size:9px;letter-spacing:.06em}
+.weapon-evolution-node h3{font-size:16px;margin:3px 0;color:#315c7a}
+.weapon-evolution-node p{font-size:12px;line-height:1.5;color:#5e7b93;white-space:pre-wrap;overflow-wrap:anywhere;margin:6px 0}
+.evolution-actions{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.academy-technique-links{margin-top:16px}
+.weapon-technique-check{display:flex;gap:9px;align-items:center;font-size:13px;color:#325a77;padding:9px 0;border-bottom:1px solid #c3d4e3}
+.weapon-technique-check input{accent-color:#157cad;width:16px;height:16px}
+.academy-weapon-empty{padding:50px 30px;min-height:390px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+.academy-weapon-empty>.ui-symbol{width:82px;height:82px;stroke-width:.8;color:#3e94be;margin-bottom:24px}
+.academy-weapon-empty h2{font:500 32px/1.1 Teko,Arial,sans-serif;margin:0;color:#305b7b}
+.academy-weapon-empty p{max-width:380px;font-size:14px;line-height:1.6;color:#6a839b;margin:12px 0 25px}
+.academy-technique-host,.academy-equipment-host,#academyWeaponArea{scroll-margin-top:110px}
+.academy-technique-host:before,.academy-equipment-host:before{display:block;margin:0 22px;padding:13px 16px;background:#163c5b;color:#8adcf3;font:600 13px 'Barlow Condensed',Arial,sans-serif;letter-spacing:.09em;border-left:4px solid #41c7e6}
+.academy-technique-host:before{content:"02 / TÉCNICAS & DESENVOLVIMENTO"}
+.academy-equipment-host:before{content:"03 / EQUIPAMENTOS & SUPRIMENTOS"}
+html[data-visual-theme] .academy-technique-host>.page-grid,html[data-visual-theme] .academy-equipment-host>.page-grid{grid-template-columns:minmax(0,1fr);padding-top:16px}
+.combat-weapon-banner{grid-column:1/-1;display:flex;align-items:center;gap:12px;padding:13px 16px;border:1px solid #6c9bbb;background:#d6e9f7;color:#224c70}
+.combat-weapon-banner>img{width:54px;height:54px;object-fit:contain;background:#102c48;padding:4px}
+.combat-weapon-banner>.ui-symbol{width:35px;height:35px;color:#3b91b8}
+.combat-weapon-banner>div{display:flex;flex-direction:column;gap:2px;flex:1}
+.combat-weapon-banner small{font-size:9px;letter-spacing:.1em}
+.combat-weapon-banner b{font-size:17px}
+.combat-weapon-banner span{font-size:11px;color:#5c7e9a}
+/* Star Guardian owns a separate library; no rune names, trees or budgets. */
+.stellar-page{padding:20px 22px 26px;display:flex;flex-direction:column;gap:22px}
+.stellar-vow-banner{padding:25px 28px;display:flex;align-items:center;gap:20px;color:#f9e9fd;border:1px solid #a880b8;border-radius:24px;background:radial-gradient(ellipse at 80% 20%,#a869a93b,transparent 55%),linear-gradient(115deg,#362344,#24213f);box-shadow:inset 0 0 0 6px #f7d7ec04,0 8px 25px #52346315}
+.stellar-banner-mark{display:grid;place-items:center;width:70px;height:70px;border:1px solid #b584ba66;border-radius:50%;background:#5f3f6d33;box-shadow:0 0 0 7px #c285bb0a;flex:0 0 auto;color:#edbedc}
+.stellar-banner-mark .ui-symbol{width:45px;height:45px;stroke-width:.9}
+.stellar-vow-banner small{font-size:10px;letter-spacing:.13em;color:#cbaad4}
+.stellar-vow-banner h2{font:500 29px/1.2 Marcellus,Georgia,serif;color:#f8e6fc;margin:6px 0 5px}
+.stellar-vow-banner p{font-size:12px;line-height:1.5;margin:0;color:#cdb9dc}
+.stellar-budget{margin-left:auto;text-align:center;display:flex;flex-direction:column;border-left:1px solid #a981ba4d;padding-left:28px;flex-shrink:0}
+.stellar-budget b{font:500 34px Marcellus,Georgia,serif;color:#ecc9e5}
+.stellar-budget small{font-size:8px;max-width:100px}
+.stellar-top-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(290px,.85fr);gap:22px}
+.stellar-orbit-panel,.stellar-covenant{border:1px solid #c8aedb;border-radius:24px;background:#faf6ff;padding:24px}
+.stellar-section-heading{display:flex;justify-content:space-between;align-items:center;gap:15px}
+.stellar-section-heading small{font-size:9px;font-weight:700;letter-spacing:.12em;color:#a17bac}
+.stellar-section-heading h2{font:500 24px/1.2 Marcellus,Georgia,serif;color:#63416f;margin:5px 0}
+.stellar-section-heading>.ui-symbol{width:28px;height:28px;color:#b07fb2;stroke-width:1.2}
+.stellar-constellation{position:relative;height:370px;isolation:isolate;margin:15px 0;background:radial-gradient(ellipse at center,#dbc5e355,transparent 63%);border-radius:50%}
+.constellation-lines{position:absolute;inset:15px 10px;width:calc(100% - 20px);height:calc(100% - 30px);fill:none;stroke:#c5a4d3;stroke-width:.3;stroke-dasharray:1 2;opacity:.8}
+.constellation-source{position:absolute;left:50%;top:47%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;text-align:center;width:160px;gap:8px}
+.constellation-source>.ui-symbol{width:70px;height:70px;color:#b370a8;stroke-width:.75;filter:drop-shadow(0 0 10px #d2a3cb50)}
+.constellation-source b{font:500 18px/1.25 Marcellus,Georgia,serif;color:#744b80}
+.constellation-source small{font-size:10px;color:#a384b0}
+.constellation-node{position:absolute;left:var(--node-x);top:var(--node-y);transform:translate(-50%,-50%);display:grid;place-items:center;width:40px;height:40px;border-radius:50%;border:1px solid #bc8dbf;color:#a4689e;background:#fff8fe;cursor:pointer;box-shadow:0 0 0 4px #e7cfe946,0 3px 8px #5d366f17}
+.constellation-node:hover{background:#f3deee;border-color:#a266a0;box-shadow:0 0 0 6px #dbb4d43b}
+.constellation-node .ui-symbol{width:23px;height:23px;stroke-width:1.2}
+.constellation-node span{position:absolute;top:46px;left:50%;transform:translateX(-50%);font:600 9px/1.25 'Nunito Sans',Arial,sans-serif;color:#8d689b;max-width:110px;white-space:normal;width:max-content;background:#faf6ffcc;border-radius:3px;padding:2px 4px}
+.stellar-orbit-hint{font-size:11px;text-align:center;color:#a183ab;margin:10px 0 0}
+#stellarCovenantFields{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-top:19px}
+#stellarCovenantFields>.field:first-child,#stellarCovenantFields>.field:nth-last-child(-n+2){grid-column:1/-1}
+html[data-visual-theme="star-guardian"] #stellarCovenantFields .field label{color:#94739f;font-size:10px;letter-spacing:.04em}
+html[data-visual-theme="star-guardian"] #stellarCovenantFields .input{background:#f4ecfa;border-color:#d6bde3;border-radius:12px;font-size:12px}
+html[data-visual-theme="star-guardian"] #stellarCovenantFields textarea.input{min-height:78px}
+.stellar-library-heading{padding:3px 4px 0}
+.stellar-library-tools{display:flex;gap:12px;justify-content:space-between;align-items:center}
+.stellar-library-tools .input{max-width:520px}
+.stellar-power-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.stellar-power-card{border:1px solid #cbb0dc;border-radius:22px;padding:20px;background:linear-gradient(135deg,#fdf7ff,#f3e9f8);box-shadow:0 6px 18px #55316408;min-width:0;scroll-margin-top:130px;transition:box-shadow .2s}
+.stellar-power-card-head{display:flex;gap:12px;align-items:center}
+.stellar-power-seal{width:46px;height:46px;display:grid;place-items:center;flex:0 0 auto;border-radius:50%;background:radial-gradient(circle,#fff3fa,#ead4eb);border:1px solid #cb9fc8;color:#a36298}
+.stellar-power-seal .ui-symbol{width:27px;height:27px;stroke-width:1.1}
+.stellar-power-card-head>div{flex:1;min-width:0}
+.stellar-power-card-head small{font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:#a27baa}
+.stellar-power-card h3{font:500 20px/1.25 Marcellus,Georgia,serif;color:#6b4176;margin:3px 0 5px;overflow-wrap:anywhere}
+.stellar-power-card-head>div>span{font-size:10px;color:#9d7ca9}
+.stellar-power-description{font-size:12px;line-height:1.7;color:#8c6d98;white-space:pre-wrap;overflow-wrap:anywhere;margin:16px 0}
+.stellar-power-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:17px}
+.stellar-power-meta>span{display:flex;align-items:center;gap:4px;border:1px solid #d9bde2;border-radius:20px;background:#f6edf9;color:#926d9d;font-size:9px;padding:4px 9px;max-width:100%;overflow-wrap:anywhere}
+.stellar-power-meta .ui-symbol{width:12px;height:12px}
+.stellar-power-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.stellar-passive-label{font-size:11px;color:#9c73a4;font-style:italic}
+.stellar-locked{opacity:.65}
+.stellar-highlight{box-shadow:0 0 0 3px #d399c2,0 0 30px #cc94bb55}
+.stellar-empty{grid-column:1/-1;padding:40px 25px;display:flex;flex-direction:column;align-items:center;text-align:center;border:1px dashed #d3b6df;border-radius:24px;background:#f8f0fc;color:#b17eae}
+.stellar-empty>.ui-symbol{width:58px;height:58px;stroke-width:.75;color:#c09bbc;margin-bottom:18px}
+.stellar-empty h3{font:500 23px Marcellus,Georgia,serif;color:#8a6395;margin:0 0 9px}
+.stellar-empty p{font-size:12px;line-height:1.7;max-width:430px;color:#a68ab3;margin:0 0 21px}
+.stellar-modal-note{display:flex;gap:10px;align-items:center;border:1px solid #d8bbdf;background:#f4e8f6;border-radius:12px;padding:14px;color:#996ca4;font-size:12px;margin-bottom:18px}
+.system-modal-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
+.stellar-combat-empty{grid-column:1/-1;display:flex;align-items:center;gap:12px;border:1px solid #d0b1df;background:#f6edf9;padding:17px;border-radius:16px;color:#976a9e}
+.stellar-combat-empty>.ui-symbol{width:32px;height:32px;color:#b883b2}
+.stellar-combat-empty div{flex:1}
+.stellar-combat-empty b{font:500 16px Marcellus,Georgia,serif;color:#84588f}
+.stellar-combat-empty p{font-size:11px;line-height:1.5;margin:4px 0 0}
+.stellar-power-card.compact{padding:14px;border-radius:15px}
+.stellar-power-card.compact h3{font-size:17px}
+.stellar-power-card.compact .stellar-power-description{font-size:11px;max-height:130px;overflow:auto}
+html[data-visual-theme] button:disabled{opacity:.5;cursor:not-allowed;transform:none}
+@media(min-width:1500px){html[data-visual-theme="classic"] .attr-card,html[data-visual-theme="battle-academia"] .attr-card{min-height:258px}}
+@media(max-width:1180px){.academy-weapon-area{grid-template-columns:minmax(0,1.4fr) minmax(260px,.8fr)}.academy-weapon-hero{grid-template-columns:1fr}.academy-weapon-art{min-height:300px}.academy-weapon-art img{height:235px}.academy-weapon-copy{padding:24px}.stellar-top-grid{grid-template-columns:minmax(0,1fr) minmax(280px,.85fr)}}
+@media(max-width:760px){
+ html[data-visual-theme] .brand-title{font-size:13px!important;letter-spacing:.025em;white-space:normal;line-height:1.15}
+ html[data-visual-theme] .brand{min-width:0}
+ html[data-visual-theme="classic"] .attr-grid{gap:13px 10px}
+ html[data-visual-theme="classic"] .attr-card{min-height:242px;padding:35px 12px 28px}
+ html[data-visual-theme="classic"] .attr-name{font-size:9px}
+ html[data-visual-theme="classic"] .attr-source-line{font-size:9px}
+ html[data-visual-theme="battle-academia"] .attr-card{min-height:245px;padding:25px 10px 18px}
+ html[data-visual-theme="star-guardian"] .attr-grid{gap:12px 2px}
+ html[data-visual-theme="star-guardian"] .attr-card{height:251px;min-height:251px;padding:60px 8px 40px}
+ html[data-visual-theme="star-guardian"] .star-attribute-frame{height:210px}
+ html[data-visual-theme="star-guardian"] .sheet{border-radius:18px 18px 8px 8px}
+ html[data-visual-theme="star-guardian"] .sheet-head{border-radius:16px 16px 0 0}
+ html[data-visual-theme="star-guardian"] .tabs{padding-bottom:7px}
+ html[data-visual-theme="star-guardian"] .tab{font-size:11px;padding:9px 12px;min-height:39px}
+ .academy-jump-nav{margin:15px 12px 0;gap:5px}
+ .academy-jump-nav a{font-size:10px;padding:7px 9px}
+ .academy-weapon-area{grid-template-columns:minmax(0,1fr);padding:15px 12px;gap:15px}
+ .academy-weapon-copy{padding:22px 18px}
+ .academy-weapon-copy h2{font-size:34px}
+ .academy-weapon-copy>p{font-size:13px}
+ .academy-weapon-art{min-height:300px}
+ .academy-weapon-switch{padding:12px;flex-wrap:wrap}
+ .academy-weapon-switch select{max-width:100%;flex:1 1 150px}
+ .academy-evolution-card,.academy-technique-links{padding:18px}
+ .academy-technique-host:before,.academy-equipment-host:before{margin:0 12px;padding:11px 12px;font-size:11px}
+ .academy-weapon-empty{padding:35px 23px;min-height:350px}
+ .combat-weapon-banner{flex-wrap:wrap;padding:12px}
+ .combat-weapon-banner b{font-size:15px}
+ .stellar-page{padding:15px 12px;gap:16px}
+ .stellar-vow-banner{padding:20px 17px;gap:12px;border-radius:20px;flex-wrap:wrap}
+ .stellar-banner-mark{width:48px;height:48px}
+ .stellar-banner-mark .ui-symbol{width:32px;height:32px}
+ .stellar-vow-banner>div:not(.stellar-budget){flex:1;min-width:0}
+ .stellar-vow-banner small{font-size:8px}
+ .stellar-vow-banner h2{font-size:24px}
+ .stellar-vow-banner p{font-size:11px}
+ .stellar-budget{flex-direction:row;align-items:center;justify-content:center;gap:10px;width:100%;border-left:0;border-top:1px solid #a981ba4d;padding:13px 0 0;margin-top:2px}
+ .stellar-budget b{font-size:25px}
+ .stellar-budget small{max-width:none;font-size:8px}
+ .stellar-top-grid{grid-template-columns:minmax(0,1fr);gap:16px}
+ .stellar-orbit-panel,.stellar-covenant{padding:19px 16px;border-radius:20px}
+ .stellar-section-heading h2{font-size:22px}
+ .stellar-section-heading small{font-size:8px}
+ .stellar-constellation{height:305px}
+ .constellation-source{width:140px}
+ .constellation-source>.ui-symbol{width:62px;height:62px}
+ .constellation-source b{font-size:16px}
+ .constellation-node{width:33px;height:33px}
+ .constellation-node .ui-symbol{width:19px;height:19px}
+ .constellation-node span{top:37px;font-size:8px;max-width:85px}
+ #stellarCovenantFields{gap:12px}
+ .stellar-library-heading{flex-wrap:wrap}
+ .stellar-library-heading .btn{width:100%}
+ .stellar-library-tools{gap:8px;flex-wrap:wrap}
+ .stellar-library-tools .input{flex:1 1 100%;max-width:none}
+ .stellar-power-list{grid-template-columns:minmax(0,1fr);gap:14px}
+ .stellar-power-card{padding:18px;border-radius:20px}
+ .stellar-power-card-head{gap:9px;flex-wrap:wrap}
+ .stellar-power-card h3{font-size:20px}
+ .stellar-power-card-head small{font-size:8px}
+ .stellar-power-card-head>div{min-width:130px}
+ .stellar-power-description{font-size:12px}
+ .stellar-combat-empty{flex-wrap:wrap}
+ .stellar-combat-empty .btn{width:100%}
+}
+@media(prefers-reduced-motion:reduce){.stellar-power-card{transition:none}}
+html[data-visual-theme="star-guardian"] .attr-rune-mark{margin:0;right:auto}
