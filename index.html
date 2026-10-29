@@ -4422,7 +4422,7 @@ document.addEventListener('click',e=>{
   const route=e.target.closest('[data-route]');if(route){current().combat.route=route.dataset.route;current().combat.usedActions=[];renderRoutes();renderCombat();scheduleSave();return}
   const act=e.target.closest('[data-action]');if(act){const a=current().combat.usedActions,k=act.dataset.action,i=a.indexOf(k);i>=0?a.splice(i,1):a.push(k);renderCombat();scheduleSave();return}
   const res=e.target.closest('[data-resource]');if(res){const k=res.dataset.resource,d=num(res.dataset.delta),c=current();c.resources[k]=num(c.resources[k])+d;if(k==='hp')c._hpTouched=true;if(k==='mp')c._mpTouched=true;renderResources();scheduleSave();return}
-  const rmax=e.target.closest('[data-resource-max]');if(rmax){const k=rmax.dataset.resource,c=current();c.resources[k]=k==='hp'?maxHp():maxMp();if(k==='hp')c._hpTouched=true;if(k==='mp')c._mpTouched=true;renderResources();scheduleSave();return}
+  const rmax=e.target.closest('[data-resource-max]');if(rmax){restoreResourceMaximum(rmax.dataset.resourceMax);return}
   const ar=e.target.closest('[data-add-rune]');if(ar){addRune(num(ar.dataset.addRune),num(ar.dataset.runeLevel));return}
   const rr=e.target.closest('[data-remove-rune]');if(rr){current().runes.splice(num(rr.dataset.removeRune),1);renderRunes();renderHeader();scheduleSave();return}
   const ra=e.target.closest('[data-remove-ability]');if(ra){current().abilities.splice(num(ra.dataset.removeAbility),1);renderAbilities();renderResources();scheduleSave();return}
@@ -4445,7 +4445,7 @@ $('#removePortrait').onclick=()=>{current().portrait='';renderPortrait();renderC
 $('#resetActionsBtn').onclick=()=>{current().combat.usedActions=[];renderCombat();scheduleSave()};
 ['degreeDiff','adBase','adType','apBase','apAttr','incomingDamage','incomingType','incomingPen','incomingFlatPen'].forEach(id=>{const el=$('#'+id);if(el)el.addEventListener('input',()=>{updateDegree();updateOffense();updateIncoming()})});
 $('#applyDamageBtn').onclick=()=>{const x=incomingCalc();current().resources.hp=Math.max(0,num(current().resources.hp)-x.final);current()._hpTouched=true;renderResources();scheduleSave();toast(`Dano aplicado: ${Math.round(x.final*100)/100}`,'bad')};
-$('#healFullBtn').onclick=()=>{current().resources.hp=maxHp();current()._hpTouched=true;renderResources();scheduleSave()};
+$('#healFullBtn').onclick=()=>restoreResourceMaximum('hp');
 $('#runeSearch').oninput=renderRuneLibrary;$('#runeTree').oninput=renderRuneLibrary;$('#runeLevelFilter').oninput=renderRuneLibrary;
 $('#abilityType').oninput=renderBuilderMods;$('#passiveDiscount').oninput=updateBuilderCost;$('#saveAbilityBtn').onclick=saveBuilderAbility;$('#resetBuilderBtn').onclick=resetBuilder;$('#manualAbilityBtn').onclick=manualAbility;
 $('#goBuilderBtn').onclick=()=>switchPage('habilidades');$('#addPHBtn').onclick=()=>{const v=prompt('Quantos P.H. bônus deseja adicionar?','0');if(v===null)return;current().resources.phBonus=num(current().resources.phBonus)+num(v);renderAbilities();renderResources();scheduleSave()};

@@ -283,3 +283,67 @@ html[data-visual-theme] button:disabled{opacity:.5;cursor:not-allowed;transform:
 }
 @media(prefers-reduced-motion:reduce){.stellar-power-card{transition:none}}
 html[data-visual-theme="star-guardian"] .attr-rune-mark{margin:0;right:auto}
+/* Vitals are always visible; progression and calculation settings can be folded. */
+html[data-visual-theme] .resource-vitals{grid-template-columns:minmax(0,1fr);gap:12px}
+html[data-visual-theme] .resource-vitals .resource-card{padding:18px 19px 15px;background:linear-gradient(115deg,color-mix(in srgb,var(--r) 9%,var(--ui-surface)),var(--ui-surface));border-color:color-mix(in srgb,var(--r) 38%,var(--ui-edge));box-shadow:inset 0 1px #ffffff55}
+html[data-visual-theme] .resource-vitals .resource-card:before{width:4px;background:var(--r)}
+html[data-visual-theme] .resource-vitals .resource-top{align-items:center;gap:12px}
+html[data-visual-theme] .resource-vitals .resource-name{font-size:12px;letter-spacing:.06em;color:var(--ui-ink);gap:9px}
+html[data-visual-theme] .resource-vitals .resource-name .ui-symbol{width:23px;height:23px;stroke-width:1.5}
+html[data-visual-theme] .resource-vitals .resource-value{font:700 34px/1.1 var(--ui-font);font-variant-numeric:tabular-nums;color:var(--ui-ink)}
+html[data-visual-theme] .resource-vitals .resource-value-limit{font-size:17px;font-weight:500;color:var(--ui-muted);white-space:nowrap}
+html[data-visual-theme] .resource-vitals .bar{height:20px;margin-top:12px;border:1px solid color-mix(in srgb,var(--r) 30%,var(--ui-edge));border-radius:4px;background:color-mix(in srgb,var(--r) 12%,var(--ui-well))}
+html[data-visual-theme] .resource-vitals .bar-fill{background:linear-gradient(90deg,color-mix(in srgb,var(--r) 75%,#183428),var(--r))}
+html[data-visual-theme] .resource-vitals .bar-label{font-size:11px;letter-spacing:.035em}
+html[data-visual-theme] .resource-vitals .resource-actions{display:grid;grid-template-columns:minmax(48px,.6fr) minmax(48px,.6fr) minmax(135px,1.25fr);gap:8px;margin-top:11px}
+html[data-visual-theme] .resource-vitals .resource-actions .btn{min-height:34px;font-size:12px;padding:7px 9px}
+html[data-visual-theme] .resource-vitals .resource-restore{background:color-mix(in srgb,var(--r) 12%,var(--ui-surface));border-color:color-mix(in srgb,var(--r) 60%,var(--ui-edge));color:var(--ui-ink);gap:7px}
+html[data-visual-theme] .resource-vitals .resource-restore:hover{background:color-mix(in srgb,var(--r) 22%,var(--ui-surface));border-color:var(--r)}
+html[data-visual-theme] .resource-vitals .resource-restore .ui-symbol{width:16px;height:16px;color:var(--r)}
+.resource-fold{margin-top:12px;border:1px solid var(--ui-edge);border-radius:var(--ui-radius);background:var(--ui-surface);color:var(--ui-ink);overflow:hidden}
+.resource-fold>summary{display:flex;align-items:center;gap:11px;padding:14px 15px;cursor:pointer;list-style:none;user-select:none;background:color-mix(in srgb,var(--ui-paper) 50%,var(--ui-surface))}
+.resource-fold>summary::-webkit-details-marker{display:none}
+.resource-fold-symbol{display:grid;place-items:center;width:31px;height:31px;flex:0 0 auto;border:1px solid color-mix(in srgb,var(--ui-accent) 25%,var(--ui-edge));border-radius:var(--ui-radius);color:var(--ui-accent);background:var(--ui-surface)}
+.resource-fold-symbol .ui-symbol{width:18px;height:18px;stroke-width:1.4}
+.resource-fold-copy{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.resource-fold-copy b{font:700 12px/1.3 var(--ui-font);color:var(--ui-ink)}
+.resource-fold-copy small{font:500 11px/1.35 var(--ui-font);color:var(--ui-muted);font-variant-numeric:tabular-nums}
+.resource-fold-chevron{display:grid;place-items:center;color:var(--ui-muted);transition:transform .15s}
+.resource-fold-chevron .ui-symbol{width:17px;height:17px}
+.resource-fold[open]>summary{border-bottom:1px solid var(--ui-edge)}
+.resource-fold[open] .resource-fold-chevron{transform:rotate(180deg)}
+.resource-fold-body{padding:13px}
+html[data-visual-theme] .resource-progression-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+html[data-visual-theme] .resource-progression-grid .resource-card{padding:12px;background:var(--ui-paper)}
+html[data-visual-theme] .resource-progression-grid .resource-name{font-size:10px}
+html[data-visual-theme] .resource-progression-grid .resource-value{font-size:22px}
+html[data-visual-theme] .resource-progression-grid .resource-actions .btn{font-size:10px;padding:6px;min-height:30px}
+html[data-visual-theme] .resource-settings .form-grid{gap:13px}
+html[data-visual-theme] #healFullBtn{display:inline-flex;align-items:center;gap:7px}
+html[data-visual-theme] #healFullBtn .ui-symbol{width:16px;height:16px}
+html[data-visual-theme="classic"] .resource-vitals .resource-card{border-radius:2px}
+html[data-visual-theme="classic"] .resource-vitals .resource-value{font-family:Cinzel,Georgia,serif;font-size:30px}
+html[data-visual-theme="classic"] .resource-fold{border-radius:2px;border-top:3px double var(--ui-edge)}
+html[data-visual-theme="battle-academia"] .resource-vitals .resource-value{font-family:Teko,Arial,sans-serif;font-size:42px;color:#123959}
+html[data-visual-theme="battle-academia"] .resource-vitals .bar{border-radius:0}
+html[data-visual-theme="battle-academia"] .resource-fold>summary{background:linear-gradient(100deg,#e1edf8,#f2f8ff)}
+html[data-visual-theme="star-guardian"] .resource-vitals .resource-card{border-radius:17px}
+html[data-visual-theme="star-guardian"] .resource-vitals .resource-value{font-family:Marcellus,Georgia,serif;font-size:33px}
+html[data-visual-theme="star-guardian"] .resource-vitals .bar{border-radius:9px}
+html[data-visual-theme="star-guardian"] .resource-fold{border-radius:14px;border-color:#d3bce1}
+html[data-visual-theme="star-guardian"] .resource-fold-symbol{border-radius:50%}
+@media(max-width:760px){
+ html[data-visual-theme] .resource-vitals .resource-card{padding:15px 13px 13px}
+ html[data-visual-theme] .resource-vitals .resource-value{font-size:29px}
+ html[data-visual-theme] .resource-vitals .resource-value-limit{font-size:15px}
+ html[data-visual-theme] .resource-vitals .resource-name{font-size:11px;gap:7px}
+ html[data-visual-theme] .resource-vitals .resource-name .ui-symbol{width:20px;height:20px}
+ html[data-visual-theme] .resource-vitals .resource-actions{grid-template-columns:minmax(40px,.6fr) minmax(40px,.6fr) minmax(125px,1.4fr);gap:6px}
+ html[data-visual-theme] .resource-vitals .resource-actions .btn{font-size:11px;padding:7px 6px}
+ .resource-fold>summary{padding:12px 10px;gap:8px}
+ .resource-fold-copy b{font-size:11px}
+ .resource-fold-copy small{font-size:10px}
+ .resource-fold-body{padding:11px}
+ html[data-visual-theme] .resource-progression-grid{grid-template-columns:minmax(0,1fr)}
+ html[data-visual-theme] .resource-settings .form-grid{grid-template-columns:minmax(0,1fr)}
+}

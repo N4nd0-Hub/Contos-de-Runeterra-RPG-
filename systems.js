@@ -233,3 +233,42 @@ document.addEventListener('click',e=>{
 });
 
 $('#combatGoBuilder').onclick=()=>sheetMode()==='star-guardian'?stellarPowerModal():switchPage('habilidades');
+
+/* Resource overview: full-width vitals, optional progression and calculation settings. */
+function setupResourceOverview(){
+ const hp=$('#hpValue'),body=hp.closest('.panel-body'),vitals=body.querySelector('.resource-grid');
+ vitals.classList.add('resource-vitals');
+ const progression=document.createElement('details');progression.className='resource-fold resource-progression';progression.id='resourceProgression';
+ progression.innerHTML=`<summary><span class="resource-fold-symbol">${uiIcon('star')}</span><span class="resource-fold-copy"><b>Experiência & Pontos de Habilidade</b><small><span id="resourceXpSummary"></span><span class="resource-summary-dot"> · </span><span id="resourcePhSummary"></span></small></span><span class="resource-fold-chevron">${uiIcon('chevron')}</span></summary><div class="resource-fold-body"><div class="resource-grid resource-progression-grid"></div></div>`;
+ const grid=progression.querySelector('.resource-grid');grid.append(vitals.querySelector('.xp'),vitals.querySelector('.ph'));
+ body.insertBefore(progression,vitals.nextSibling);
+ const settings=body.querySelector(':scope > .form-grid');
+ if(settings){const fold=document.createElement('details');fold.className='resource-fold resource-settings';fold.id='resourceSettings';fold.innerHTML=`<summary><span class="resource-fold-symbol">${uiIcon('settings')}</span><span class="resource-fold-copy"><b>Configuração dos recursos</b><small>Vida base, multiplicadores e proteções</small></span><span class="resource-fold-chevron">${uiIcon('chevron')}</span></summary><div class="resource-fold-body"></div>`;fold.querySelector('.resource-fold-body').append(settings);settings.style.marginTop='0';body.append(fold)}
+ const hpBtn=document.querySelector('[data-resource-max="hp"]'),mpBtn=document.querySelector('[data-resource-max="mp"]');
+ hpBtn.innerHTML=uiIcon('heart')+'Curar ao máximo';hpBtn.classList.add('resource-restore');hpBtn.title='Restaurar a Vida atual até o máximo calculado, incluindo os bônus da ficha.';
+ mpBtn.innerHTML=uiIcon('drop')+'Restaurar Mana';mpBtn.classList.add('resource-restore');mpBtn.title='Restaurar a Mana atual até o máximo calculado.';
+ $('#healFullBtn').innerHTML=uiIcon('heart')+'Curar ao máximo';$('#healFullBtn').title=hpBtn.title;
+ for(const [id,key] of [['resourceProgression','resourceProgressionOpen'],['resourceSettings','resourceSettingsOpen']])$('#'+id)?.addEventListener('toggle',e=>{const open=e.currentTarget.open;if(!!current().ui[key]!==open){current().ui[key]=open;scheduleSave()}})
+}
+setupResourceOverview();
+function renderResourceOverview(){
+ const c=current();
+ $('#resourceXpSummary').textContent=$('#xpValue').textContent+' XP';$('#resourcePhSummary').textContent=$('#phValue').textContent+' P.H.';
+ const d=baseDerived();
+ for(const [key,maximum] of [['hp',d.hpMax],['mp',d.mpMax]]){
+  const value=$('#'+key+'Value');value.innerHTML=`${fmt(c.resources[key])}<span class="resource-value-limit"> / ${fmt(maximum)}</span>`;
+  value.setAttribute('aria-label',`${key==='hp'?'Vida':'Mana'}: ${fmt(c.resources[key])} de ${fmt(maximum)}`)
+ }
+}
+function restoreResourceMaximum(key){
+ if(!['hp','mp'].includes(key))return;
+ const c=current(),before=num(c.resources[key]),maximum=key==='hp'?maxHp():maxMp();
+ c.resources[key]=Math.max(0,num(maximum));c[key==='hp'?'_hpTouched':'_mpTouched']=true;
+ renderResources();renderAttrs();renderDerived();renderCombat();renderRunes();
+ if(sheetMode()==='star-guardian')renderStellarPowers();
+ scheduleSave();toast(`${key==='hp'?'Vida':'Mana'} restaurada: ${fmt(c.resources[key])}/${fmt(maximum)}${maximum>before?' (+'+fmt(maximum-before)+')':''}.`,'good')
+}
+const baseResourceOverviewRender=renderResources;
+renderResources=function(){baseResourceOverviewRender();renderResourceOverview()};
+const baseResourceOverviewAll=renderAll;
+renderAll=function(){baseResourceOverviewAll();$('#resourceProgression').open=!!current().ui.resourceProgressionOpen;$('#resourceSettings').open=!!current().ui.resourceSettingsOpen};
