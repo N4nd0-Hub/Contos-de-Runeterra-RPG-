@@ -1,0 +1,72 @@
+/* Readable controls on every custom palette, including rune panels with a dark surface. */
+html[data-visual-theme][data-appearance] .rune-level-pip{background:var(--rune-surface);color:var(--rune-ink);border:1px solid var(--rune-edge);font:800 11px/1 var(--ui-font);min-height:27px;min-width:28px;box-shadow:none;opacity:1;text-shadow:none}
+html[data-visual-theme][data-appearance] .rune-level-pip:hover{background:var(--rune-bg);color:var(--rune-ink);border-color:var(--tree)}
+html[data-visual-theme][data-appearance] .rune-level-pip.active{background:var(--tree);color:#10151f;border-color:var(--tree);box-shadow:0 0 0 2px color-mix(in srgb,var(--tree) 20%,transparent)}
+html[data-visual-theme][data-appearance] .good{color:var(--a-positive)}
+html[data-visual-theme][data-appearance] .bad{color:var(--a-negative)}
+html[data-visual-theme][data-appearance] .rune-game-header .good{color:var(--rune-ink)}
+html[data-visual-theme][data-appearance] :is(.rune-runtime-chip,.rune-state-row,.rune-proc-tag){color:var(--ui-ink);background:var(--ui-surface);border-color:var(--ui-edge);text-shadow:none}
+html[data-visual-theme][data-appearance] :is(.rune-state-row input,.rune-state-row select,.item-effect-row input,.item-effect-row select){background:var(--ui-surface);color:var(--ui-ink);border-color:var(--ui-edge);font-size:13px}
+html[data-visual-theme][data-appearance] .rune-state-row label{color:var(--ui-muted)}
+html[data-visual-theme][data-appearance] .attr-source-line span:not(.attr-empty-source){background:var(--a-alt);color:var(--a-alt-text);border-color:var(--a-line);max-width:100%;font-size:9px}
+html[data-visual-theme][data-appearance] :is(.item-preset-box,.ability-effect-summary,.relicary-binding){background:var(--ui-paper);border-color:var(--ui-edge);color:var(--a-paper-text)}
+html[data-visual-theme][data-appearance] :is(.row-remove,.item-effect-row .row-remove){background:var(--ui-surface);color:var(--ui-ink);border:1px solid var(--ui-edge);min-width:32px;min-height:32px;border-radius:4px}
+html[data-visual-theme][data-appearance] :is(.combat-skill-rune-breakdown,.combat-cost-row,.builder-check,.resistance-rule-summary,.item-equipped-row){color:var(--ui-muted)}
+html[data-visual-theme][data-appearance] :is(.combat-skill-rune-breakdown b,.builder-section-head b,.builder-section-head strong,.inventory-summary-stat b){color:var(--ui-ink)}
+html[data-visual-theme][data-appearance] :is(.rune-combat-settings,.rune-combat-settings .input,.rune-combat-settings .select){background:var(--ui-surface);color:var(--ui-ink);border-color:var(--ui-edge)}
+html[data-visual-theme][data-appearance] .save-indicator{color:var(--a-on-header)}
+html[data-visual-theme][data-appearance] .rune-loadout-item button{color:var(--rune-ink);background:transparent}
+.rune-automation-overview{grid-column:1/-1;border:1px solid var(--ui-edge);border-radius:var(--ui-radius);background:var(--ui-surface);color:var(--ui-ink);min-width:0}
+.rune-automation-overview>summary{list-style:none;display:flex;align-items:center;gap:13px;padding:15px 18px;cursor:pointer}
+.rune-automation-overview>summary::-webkit-details-marker{display:none}
+.rune-automation-overview>summary>.ui-symbol{color:var(--ui-accent);width:24px;height:24px}
+.rune-automation-overview>summary>span{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+.rune-automation-overview>summary b{font:700 14px/1.4 var(--ui-font)}
+.rune-automation-overview>summary small{font:500 11px/1.5 var(--ui-font);color:var(--ui-muted);overflow-wrap:anywhere}
+.rune-automation-overview>summary>.ui-symbol:last-child{width:16px;height:16px}
+.rune-automation-overview[open]>summary{border-bottom:1px solid var(--ui-edge)}
+.rune-overview-body{padding:18px;font:500 12px/1.65 var(--ui-font)}
+.rune-overview-body p{margin:0 0 13px}
+.rune-overview-body>small{display:block;font-size:11px;margin-top:12px;color:var(--ui-muted)}
+.rune-bonus-tags{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:18px}
+.rune-bonus-tags>span{padding:5px 9px;border:1px solid var(--ui-edge);background:var(--ui-tint);color:var(--ui-ink);border-radius:4px;font-weight:700;font-size:11px}
+html[data-visual-theme] #runeLibrary.rune-detail-description{white-space:normal;font-family:var(--ui-font);font-size:13px;line-height:1.7;max-height:none}
+.rune-reading-guide{padding:15px;border:1px solid var(--rune-edge);border-left:3px solid var(--ui-glow);border-radius:6px;background:var(--rune-surface);margin:17px 0;color:var(--rune-ink)}
+.rune-reading-guide>small{display:block;font-size:9px;letter-spacing:.12em;font-weight:800;color:var(--rune-muted)}
+.rune-reading-guide>b{display:block;font-size:15px;line-height:1.4;margin:5px 0}
+.rune-reading-guide>p{font-size:12px;line-height:1.65;color:var(--rune-muted);margin:7px 0 11px}
+.rune-reading-guide>span{display:block;border-top:1px solid var(--rune-edge);padding-top:10px;font-size:10px;color:var(--rune-ink)}
+.rune-rule-section{margin:0 0 18px;padding:0 0 18px;border-bottom:1px solid var(--rune-edge)}
+.rune-rule-section h4{font:700 15px/1.45 var(--ui-font);color:var(--rune-ink);margin:0 0 9px}
+.rune-rule-section p{font:500 calc(13px * var(--appearance-scale))/1.8 var(--ui-font);color:var(--rune-muted);margin:0;overflow-wrap:anywhere}
+.rune-rule-section strong{color:var(--rune-ink);font-weight:800}
+#runeLibrary.compact .rune-rule-section p{font-size:12px;line-height:1.65}
+.rune-rule-controls{border:1px solid var(--ui-edge);border-radius:8px;background:var(--ui-surface);padding:14px;margin:15px 0;color:var(--ui-ink);white-space:normal}
+.rune-rule-controls>b{font:700 12px/1.4 var(--ui-font);display:block;margin-bottom:12px;color:var(--ui-ink)}
+.rune-rule-controls>div{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
+.rune-rule-controls>small{display:block;font:500 10px/1.6 var(--ui-font);color:var(--ui-muted);margin-top:12px}
+.rune-control-field{display:flex;flex-direction:column;gap:7px;font:700 10px/1.4 var(--ui-font);min-width:100px;flex:1;color:var(--ui-muted)}
+.rune-control-field .input,.rune-control-field .select{min-width:0;width:100%;font-size:12px!important}
+.rune-control-check{display:flex;align-items:center;gap:9px;font:700 11px/1.5 var(--ui-font);flex:1 1 100%;color:var(--ui-ink)}
+.rune-control-check input{accent-color:var(--ui-accent);width:17px;height:17px;flex-shrink:0}
+.rune-rule-controls .btn{white-space:normal;text-align:center;font-size:11px}
+.relicary-applied-effects{padding:14px 0;border-top:1px solid var(--ui-edge);width:100%;margin:0 0 15px}
+.relicary-applied-effects>small{display:block;font-size:9px;font-weight:700;letter-spacing:.08em;color:var(--ui-muted);margin-bottom:9px}
+.relicary-applied-effects>div,.relicary-form-effects{display:flex;flex-wrap:wrap;gap:6px}
+.relicary-applied-effects p{font-size:11px;line-height:1.5;color:var(--ui-muted);margin:10px 0 0}
+.relicary-form-effects .tag{font-size:10px}
+.relicary-binding{border:1px solid var(--ui-edge);padding:14px;border-radius:var(--ui-radius);margin:0 0 16px}
+.relicary-slot-field{margin:14px 0}
+.relicary-unavailable{opacity:.65}
+@media(max-width:760px){.rune-overview-body{padding:14px}.rune-automation-overview>summary{padding:13px;gap:9px}.rune-automation-overview>summary b{font-size:12px}.rune-automation-overview>summary small{font-size:10px}.rune-rule-controls{padding:12px}.rune-rule-controls .btn{flex:1 1 100%}.rune-control-field{flex-basis:100%}.relicary-binding{grid-template-columns:minmax(0,1fr)!important;padding:12px}.item-effect-row{grid-template-columns:minmax(0,1fr) minmax(0,.7fr) 65px 32px!important}.item-effect-row select{min-width:0;font-size:11px!important}}
+/* Legacy rune overrides used !important with fixed brown/blue colors. */
+html[data-visual-theme][data-appearance] .rune-level-pip{color:var(--rune-ink)!important}
+html[data-visual-theme][data-appearance] .rune-level-pip.active{color:#10151f!important}
+html[data-visual-theme][data-appearance] .rune-game-header :is(.helper,.good){color:var(--rune-ink)!important}
+html[data-visual-theme][data-appearance] .rune-runtime-actions .btn{background:var(--ui-surface)!important;color:var(--ui-ink)!important;border-color:var(--ui-edge)!important}
+html[data-visual-theme][data-appearance] .rune-runtime-chip{background:var(--ui-surface)!important;color:var(--ui-ink)!important;border-color:var(--ui-edge)}
+html[data-visual-theme][data-appearance] .rune-game-header #runeWarning,html[data-visual-theme][data-appearance] .rune-game-header #runeWarning *{color:var(--rune-ink)!important}
+html[data-visual-theme][data-appearance] .rune-detail-card #runeTextModeBtn{color:var(--rune-ink)!important;background:var(--rune-surface)!important;border-color:var(--rune-edge)!important}
+html[data-visual-theme][data-appearance] :is(textarea.input,input.input,select.select){background:var(--ui-surface);color:var(--ui-ink);border-color:var(--ui-edge)}
+html[data-visual-theme][data-appearance] :is(textarea.input,input.input)::placeholder{color:var(--ui-muted);opacity:.85}
+html[data-visual-theme][data-appearance] select.select option{background:var(--ui-surface);color:var(--ui-ink)}
