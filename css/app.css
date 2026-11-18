@@ -182,6 +182,7 @@ input[type=checkbox]{accent-color:var(--rx-p);width:16px;height:16px}
 .field.full{grid-column:1/-1}
 .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .form-grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.form-grid.six{grid-template-columns:repeat(6,minmax(0,1fr))}
 .check{display:flex;align-items:center;gap:8px;font-size:.88rem;cursor:pointer}
 .inline{display:inline-flex;align-items:center;gap:6px;font-size:.82rem;color:var(--rx-muted)}
 .seg{display:inline-flex;padding:3px;gap:3px;background:var(--rx-panel2);border:1px solid var(--rx-line);border-radius:var(--rx-r2)}
@@ -591,6 +592,7 @@ body.modal-open{overflow:hidden}
 
 /* ---------- responsivo ---------- */
 @media (max-width:1280px){
+ .form-grid.six{grid-template-columns:repeat(3,minmax(0,1fr))}
  .combat-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.combat-grid>.stack:nth-child(2){grid-column:1/-1;order:-1}
  .attr-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
  .rune-browser{grid-template-columns:170px minmax(0,1fr)}.rune-detail{grid-column:1/-1;position:static}
@@ -616,6 +618,7 @@ body.modal-open{overflow:hidden}
  .attr-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.attr-total{font-size:2.4rem}
  .role-grid{grid-template-columns:minmax(0,1fr)}.prog-now{grid-template-columns:repeat(2,minmax(0,1fr))}
  .form-grid,.form-grid.three,.tactics,.colors{grid-template-columns:minmax(0,1fr)}
+ .form-grid.six{grid-template-columns:repeat(2,minmax(0,1fr))}
  .prof{grid-template-columns:30px minmax(0,1fr) auto auto;}.prof .ranks{grid-column:2/-1;order:5}
  .rune-browser{grid-template-columns:minmax(0,1fr)}.tree-tabs{flex-direction:row;overflow-x:auto}.tree-tab span{display:none}
  .effects{grid-template-columns:repeat(4,1fr)}
@@ -626,3 +629,4 @@ body.modal-open{overflow:hidden}
  .acond{grid-template-columns:30px minmax(0,1fr)}.ac-ctrl{grid-column:1/-1;justify-content:flex-start}
 }
 @media (max-width:460px){.hide-xs{display:none!important}.head-vitals{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.derived-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+.perfil-top .portrait-card{flex:1;display:flex;flex-direction:column}.perfil-top .portrait-card .card-body{flex:1;display:flex;flex-direction:column}.perfil-top .portrait-card .portrait{flex:1;aspect-ratio:auto;min-height:340px}

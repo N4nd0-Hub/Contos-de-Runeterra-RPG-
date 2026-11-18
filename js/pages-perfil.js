@@ -9,9 +9,10 @@ function renderPerfil(c){
  const S=SYSTEMS[sheetMode(c)];
  return pageIntro('perfil',S.kicker+' / 01','Perfil','Quem é seu personagem, de onde vem e do que é capaz.')+
  `<div class="grid perfil-top">
-   <div class="stack">${portraitCard(c)}${identityCard(c)}</div>
+   <div class="stack">${portraitCard(c)}</div>
    <div class="stack">${roleCard(c)}${progressCard(c)}</div>
   </div>
+  ${identityCard(c)}
   ${attrsCard(c)}
   ${derivedCard(c)}
   <div class="grid two">${profsCard(c)}${complicationsCard(c)}</div>
@@ -39,14 +40,14 @@ ACT['portrait-remove']=()=>{if(!confirm('Remover o retrato?'))return;current().p
 /* ---------- identidade ---------- */
 function identityCard(c){
  const i=c.identity;
- return card({icon:'raca',kicker:'Identidade',title:'Origem',body:`<div class="form-grid">
-  ${fieldIn('Raça','identity.race',i.race,{ph:'Humano, Vastaya de Shimon, Yordle...'})}
-  ${fieldIn('Função','identity.func',i.func,{ph:'Ninja, Paladino, Bombardeiro Hextec...'})}
-  ${fieldIn('Traço racial','identity.racialTrait',i.racialTrait,{ph:'Passo-Leve, visão no escuro...',cls:'full'})}
+ return card({icon:'raca',kicker:'Raça: +2 atributos, 1 traço e 1 proficiência · Função: +1 atributo e 2 proficiências',title:'Origem',cls:'identity-card',body:`<div class="form-grid six">
+  ${fieldIn('Raça','identity.race',i.race,{ph:'Humano, Vastaya...'})}
+  ${fieldIn('Função','identity.func',i.func,{ph:'Ninja, Paladino...'})}
+  ${fieldIn('Traço racial','identity.racialTrait',i.racialTrait,{ph:'Passo-Leve...'})}
   ${fieldIn('Região','identity.region',i.region,{ph:'Freljord, Ionia...'})}
   ${fieldIn('Ancestral / variante','identity.ancestry',i.ancestry,{ph:'Glacinata, Shimon...'})}
-  ${fieldIn('Idiomas','identity.languages',i.languages,{ph:'Comum, Ioniano...',cls:'full'})}
- </div><p class="hint">${icon('info')}A Raça dá +2 pontos de atributo, 1 traço racial e 1 proficiência rank I. A Função dá +1 ponto de atributo e 2 proficiências rank I.</p>`})
+  ${fieldIn('Idiomas','identity.languages',i.languages,{ph:'Comum, Ioniano...'})}
+ </div>`})
 }
 
 /* ---------- papel ---------- */
