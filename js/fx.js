@@ -156,7 +156,7 @@
     if (reduced()) return;
     document.body.prepend(sky); sizeSky(); initSky(); cancelAnimationFrame(skyRaf); skyRaf = requestAnimationFrame(drawSky);
   }
-  addEventListener('resize', function () { if (!sky.isConnected) return; sizeSky(); initSky(); positionInk(); });
+  addEventListener('resize', function () { if (!sky.isConnected) return; sizeSky(); initSky(); positionInk(true); });
   addEventListener('pointermove', function (e) { mouse.x = e.clientX / innerWidth; mouse.y = e.clientY / innerHeight; }, { passive: true });
 
   /* ---------- partículas (canvas de efeitos) -------------------------- */
@@ -200,9 +200,10 @@
     var Pl = palette(); add({ k: R() < .5 ? 'star' : 'dot', x: e.clientX + (R() - .5) * 8, y: e.clientY + (R() - .5) * 8, vy: .4 + R() * .6, vx: (R() - .5) * .5, r: 1.6 + R() * 2.4, c: [Pl.p, Pl.a, [255, 255, 255]][Math.floor(R() * 3)], decay: .03, rot: R() * 6, vr: .05, fr: .98 });
   }, { passive: true });
   document.addEventListener('pointerdown', function (e) {
-    var b = e.target.closest && e.target.closest('.btn,.tab,.route-choice-button,.action-token,.rune-game-choice,.rune-tree-button,.chip,.dr-fab,.rx-roll-chip,.attr-card');
+    var b = e.target.closest && e.target.closest('.btn,.tab,.route-opt,.token,.rtile,.chip,.rd-fab,.roll-btn,.attr,.kslot,.gem,.role-opt,.test,.rank,.step,.energy-pips button');
     if (!b || b.disabled) return; burst(e.clientX, e.clientY, b.classList.contains('primary') ? 1.4 : 1);
   }, true);
+
 
   /* ---------- ornamentos ---------------------------------------------- */
   var CORNER = '<svg viewBox="0 0 46 46"><path d="M3 43V12L12 3h31"/><path d="M9 43V15l6-6h28" opacity=".5"/><path d="m3 3 6 6M18 9l4-4 4 4-4 4Z"/></svg>';
@@ -211,12 +212,12 @@
     ['tl', 'tr', 'bl', 'br'].forEach(function (k) { var d = document.createElement('span'); d.className = 'rx-corner ' + k; d.setAttribute('aria-hidden', 'true'); d.innerHTML = CORNER; sheet.appendChild(d); });
   }
 
-  /* ---------- indicador das abas -------------------------------------- */
-  var ink = null;
+  /* ---------- indicador deslizante das abas ---------------------------- */
+  var ink = document.createElement('span'); ink.className = 'rx-tab-ink'; ink.setAttribute('aria-hidden', 'true');
   function positionInk(instant) {
     var nav = document.getElementById('tabs'); if (!nav) return;
-    if (!ink || !ink.isConnected) { ink = document.createElement('span'); ink.className = 'rx-tab-ink'; ink.setAttribute('aria-hidden', 'true'); nav.prepend(ink); }
-    var a = nav.querySelector('.tab.active:not([hidden])'); if (!a) { ink.style.opacity = '0'; return; }
+    if (ink.parentNode !== nav) nav.prepend(ink);
+    var a = nav.querySelector('.tab.active'); if (!a) { ink.style.opacity = '0'; return; }
     var nr = nav.getBoundingClientRect(), r = a.getBoundingClientRect();
     if (instant) ink.style.transition = 'none';
     ink.style.width = r.width + 'px'; ink.style.height = r.height + 'px'; ink.style.opacity = '1';
@@ -224,18 +225,15 @@
     if (instant) { ink.getBoundingClientRect(); ink.style.transition = ''; }
   }
 
-  /* ---------- transição de página ------------------------------------- */
-  var PAGE_NAMES = { perfil: 'Perfil', combate: 'Combate', runas: 'Runas', habilidades: 'Técnicas', condicoes: 'Condições', inventario: 'Inventário', regras: 'Regras', estelares: 'Poderes estelares', arsenal: 'Arma Relicário' };
-  function enterPage(name, from) {
-    var page = document.querySelector('.page[data-page="' + name + '"]'); if (!page) return;
-    page.classList.remove('rx-enter'); void page.offsetWidth;
-    var i = 0; page.querySelectorAll('.panel').forEach(function (p) { if (i < 14) p.style.setProperty('--rx-i', i++); });
-    if (!reduced()) page.classList.add('rx-enter');
-    clearTimeout(page._rxT); page._rxT = setTimeout(function () { page.classList.remove('rx-enter'); }, 1400);
+  /* ---------- troca de página ------------------------------------------ */
+  var NAMES = { perfil: 'Perfil', combate: 'Combate', kit: 'Kit', runas: 'Runas', condicoes: 'Condições', inventario: 'Inventário', regras: 'Regras', estelares: 'Estrelas', arsenal: 'Relicário' };
+  function enterPage(name) {
+    var page = document.querySelector('.page.active'); if (!page) return;
+    var i = 0; page.querySelectorAll('.card,.ability,.attr,.cond,.staged').forEach(function (p) { if (i < 18) p.style.setProperty('--rx-i', i++); });
+    if (!reduced()) { page.classList.add('rx-enter'); setTimeout(function () { page.classList.remove('rx-enter'); }, 1500); }
     if (!ready || reduced()) return;
-    var m = mode(), tab = document.querySelector('.tab.active'), r = tab && tab.getBoundingClientRect();
-    if (m === 'battle-academia') slashBanner(PAGE_NAMES[name] || name);
-    else if (r) burst(r.left + r.width / 2, r.top + r.height / 2, 1.3);
+    if (mode() === 'battle-academia') slashBanner(NAMES[name] || name);
+    else { var t = document.querySelector('.tab.active'), r = t && t.getBoundingClientRect(); if (r) burst(r.left + r.width / 2, r.top + r.height / 2, 1.3); }
   }
   function slashBanner(text) {
     var v = document.createElement('div'); v.className = 'rx-veil rx-slash';
@@ -243,76 +241,55 @@
     document.body.appendChild(v); setTimeout(function () { v.remove(); }, 900);
   }
 
-  /* ---------- números animados ---------------------------------------- */
-  var NUMSEL = '.attr-total-num,.derived b,.combat-hud-stat b,.resource-value,.inventory-summary-stat b,.stellar-budget b,.rune-game-budget b';
+  /* ---------- números animados ----------------------------------------- */
+  var NUMSEL = '.attr-total,.vital b,.vbox header b,.stat b,.cab-val strong,.ph-big b,.round-badge b,.vow-count b';
   var lastNums = {};
-  function keyOf(el, i) { return (el.id || (el.closest('[data-edit-attr]') || {}).dataset?.editAttr || '') + '|' + el.className + '|' + i; }
+  function keyOf(el, i) { var a = el.closest('[data-attr]'); return (a ? a.dataset.attr : '') + '|' + el.className + '|' + (el.parentNode && el.parentNode.className) + '|' + i; }
   function animateNumbers() {
-    if (!ready || reduced()) { snapshotNumbers(); return; }
     var els = document.querySelectorAll(NUMSEL), seen = {};
     els.forEach(function (el, i) {
       var tn = el.firstChild; if (!tn || tn.nodeType !== 3) return;
       var txt = tn.nodeValue, m = /^(\s*[-+]?)(\d+(?:[.,]\d+)?)(.*)$/.exec(txt); if (!m) return;
       var k = keyOf(el, i), val = parseFloat(m[2].replace(',', '.')); seen[k] = val;
       var old = lastNums[k];
-      if (old == null || old === val || !el.offsetParent) return;
-      var dec = (m[2].split(/[.,]/)[1] || '').length, t0 = performance.now(), dur = 650;
-      el.classList.remove('rx-bump'); void el.offsetWidth; el.classList.add('rx-bump', val > old ? 'rx-up' : 'rx-down');
+      if (!ready || reduced() || old == null || old === val || !el.offsetParent) return;
+      var dec = (m[2].split(/[.,]/)[1] || '').length, t0 = performance.now(), dur = 600;
+      el.classList.remove('rx-bump', 'rx-up', 'rx-down'); void el.offsetWidth; el.classList.add('rx-bump', val > old ? 'rx-up' : 'rx-down');
       setTimeout(function () { el.classList.remove('rx-bump', 'rx-up', 'rx-down'); }, 700);
       (function step(now) {
         if (tn.parentNode !== el) return;
         var p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 3), v = old + (val - old) * e;
-        tn.nodeValue = m[1] + (dec ? v.toFixed(dec).replace('.', m[2].indexOf(',') >= 0 ? ',' : '.') : Math.round(v)) + m[3];
+        tn.nodeValue = m[1] + (dec ? v.toFixed(dec).replace('.', ',') : Math.round(v)) + m[3];
         if (p < 1) requestAnimationFrame(step); else tn.nodeValue = txt;
       })(t0);
     });
-    for (var k in seen) lastNums[k] = seen[k];
+    lastNums = seen;
   }
-  function snapshotNumbers() {
-    document.querySelectorAll(NUMSEL).forEach(function (el, i) { var tn = el.firstChild; if (!tn || tn.nodeType !== 3) return; var m = /^\s*[-+]?(\d+(?:[.,]\d+)?)/.exec(tn.nodeValue); if (m) lastNums[keyOf(el, i)] = parseFloat(m[1].replace(',', '.')); });
-  }
-  /* vida e mana: tremor ao perder, brilho ao recuperar */
-  var lastHp = null, lastMp = null;
+  var lastHp = null, lastMp = null, lastEn = null;
   function vitals() {
-    var read = function (id) { var e = document.getElementById(id); if (!e) return null; var m = /(-?\d+(?:\.\d+)?)/.exec(e.textContent); return m ? +m[1] : null; };
-    var hp = read('hpValue'), mp = read('mpValue');
+    try { var c = current(), D = derived(c), hp = c.res.hp == null ? D.hpMax : c.res.hp, mp = c.res.mana == null ? D.manaMax : c.res.mana, en = c.res.energy; } catch (e) { return; }
     var fire = function (sel, cls) { document.querySelectorAll(sel).forEach(function (el) { el.classList.remove('rx-hit', 'rx-heal'); void el.offsetWidth; el.classList.add(cls); setTimeout(function () { el.classList.remove(cls); }, 800); }); };
-    if (ready && lastHp != null && hp != null && hp !== lastHp) fire('.resource-card.hp,.combat-hud-resource.hp', hp < lastHp ? 'rx-hit' : 'rx-heal');
-    if (ready && lastMp != null && mp != null && mp !== lastMp) fire('.resource-card.mp,.combat-hud-resource.mp', mp < lastMp ? 'rx-hit' : 'rx-heal');
-    lastHp = hp; lastMp = mp;
+    if (ready && lastHp != null && hp !== lastHp) { fire('.vital.hp,.vbox.hp', hp < lastHp ? 'rx-hit' : 'rx-heal'); if (hp < lastHp) flash('hurt'); }
+    if (ready && lastMp != null && mp !== lastMp) fire('.vital.mp,.vbox.mp', mp < lastMp ? 'rx-hit' : 'rx-heal');
+    if (ready && lastEn != null && en === 10 && lastEn < 10) { var b = document.querySelector('.vbox.en,.vital.en'); if (b) { var r = b.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height / 2, 2); } }
+    lastHp = hp; lastMp = mp; lastEn = en;
   }
+  function flash(kind) { if (reduced()) return; var v = document.createElement('div'); v.className = 'rx-flash ' + kind; document.body.appendChild(v); setTimeout(function () { v.remove(); }, 700); }
 
-  /* ---------- atributos: inclinação 3D e rolagem ---------------------- */
-  var D20 = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 9 5v10l-9 5-9-5V7Zm0 0L7 8l-4-1m9-5 5 6 4-1M7 8h10l-5 9Zm-4 9 9 0 9 0M7 8l-4 9m14-9 4 9m-9 0v5"/></svg>';
-  function decorateAttrs() {
-    document.querySelectorAll('#attrGrid .attr-card').forEach(function (card) {
-      if (card.querySelector('.rx-roll-chip')) return;
-      var b = document.createElement('button'); b.type = 'button'; b.className = 'rx-roll-chip'; b.innerHTML = D20;
-      var code = (card.querySelector('.attr-code') || {}).textContent || '';
-      b.title = 'Rolar 1d20 + ' + code; b.setAttribute('aria-label', 'Rolar teste de ' + ((card.querySelector('.attr-name') || {}).textContent || code));
-      card.appendChild(b);
-    });
-  }
-  document.addEventListener('click', function (e) {
-    var chip = e.target.closest && e.target.closest('.rx-roll-chip'); if (!chip) return;
-    e.preventDefault(); e.stopPropagation();
-    var card = chip.closest('.attr-card'), code = (card.querySelector('.attr-code') || {}).textContent || '', v = parseInt((card.querySelector('.attr-total-num') || {}).textContent, 10) || 0;
-    if (window.RxDice) RxDice.roll('1d20' + (v ? (v > 0 ? '+' : '') + v : ''), 'TESTE DE ' + code.trim().toUpperCase(), { attr: true });
-  }, true);
+  /* ---------- atributos: inclinação 3D -------------------------------- */
   document.addEventListener('pointermove', function (e) {
-    var c = e.target.closest && e.target.closest('.attr-card'); if (!c || reduced() || mode() === 'battle-academia') return;
+    var c = e.target.closest && e.target.closest('.attr'); if (!c || reduced() || mode() === 'battle-academia' || e.pointerType !== 'mouse') return;
     var r = c.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
-    c.style.transform = 'perspective(700px) rotateX(' + (-y * 14) + 'deg) rotateY(' + (x * 16) + 'deg) translateY(-6px) scale(1.03)';
+    c.style.transform = 'perspective(800px) rotateX(' + (-y * 10) + 'deg) rotateY(' + (x * 12) + 'deg) translateY(-4px)';
   }, { passive: true });
-  document.addEventListener('pointerout', function (e) { var c = e.target.closest && e.target.closest('.attr-card'); if (c && !c.contains(e.relatedTarget)) c.style.transform = ''; });
-
+  document.addEventListener('pointerout', function (e) { var c = e.target.closest && e.target.closest('.attr'); if (c && !c.contains(e.relatedTarget)) c.style.transform = ''; });
   /* ---------- abertura e troca de modalidade -------------------------- */
   var EMBLEM = {
     classic: '<svg viewBox="0 0 200 200"><g class="e-ring"><circle cx="100" cy="100" r="92"/><circle cx="100" cy="100" r="84" stroke-dasharray="2 6"/></g><path class="e-hex" d="m100 24 66 38v76l-66 38-66-38V62Z"/><path class="e-in" d="m100 24-34 47-32-9m66-38 34 47 32-9M66 71h68l-34 85ZM34 138l66-11 66 11M66 71l-32 67m100-67 32 67m-66-11v49"/></svg>',
     'battle-academia': '<svg viewBox="0 0 200 200"><path class="e-hex" d="M100 14 178 44v62l-78 82-78-82V44Z"/><path class="e-in" d="M100 44 140 94 100 144 60 94Z M100 30v150M40 94h120"/><path class="e-slash" d="M55 140 145 50"/></svg>',
     'star-guardian': '<svg viewBox="0 0 200 200"><g class="e-ring"><circle cx="100" cy="100" r="90" stroke-dasharray="1 9"/></g><path class="e-hex" d="m100 12 24 58 62 4-48 40 15 61-53-33-53 33 15-61-48-40 62-4Z"/><path class="e-in" d="m100 50 13 32 34 3-26 22 8 33-29-18-29 18 8-33-26-22 34-3Z"/></svg>'
   };
-  var TITLES = { classic: ['Runearcana', 'Códice do Aventureiro'], 'battle-academia': ['Battle Academia', 'Registro do Estudante'], 'star-guardian': ['Star Guardian', 'Primeira Estrela'] };
+  var TITLES = { classic: ['Runearcana', 'Códice do Aventureiro · Sistema 2.0'], 'battle-academia': ['Battle Academia', 'Registro do Estudante · Sistema 2.0'], 'star-guardian': ['Star Guardian', 'Primeira Estrela · Sistema 2.0'] };
   function curtain(m, intro) {
     if (reduced()) return;
     var v = document.createElement('div'); v.className = 'rx-curtain rx-c-' + m + (intro ? ' intro' : '');
@@ -326,30 +303,28 @@
     setTimeout(function () { var r = v.querySelector('.rx-c-emblem').getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height / 2, 2.4); }, intro ? 380 : 200);
   }
 
-  /* ---------- ganchos nas funções da ficha ---------------------------- */
-  function wrap(name, after, before) {
-    var orig = window[name]; if (typeof orig !== 'function') return;
-    window[name] = function () { var ctx = before ? before.apply(this, arguments) : null; var r = orig.apply(this, arguments); try { after && after.apply(this, [r, ctx].concat([].slice.call(arguments))); } catch (e) { console.warn('[RxFx]', name, e); } return r; };
-  }
-  function refresh() { syncMode(); decorate(); decorateAttrs(); positionInk(!ready); animateNumbers(); vitals(); }
-  wrap('renderAll', function () { refresh(); });
-  wrap('renderAttrs', function () { decorateAttrs(); });
-  wrap('renderResources', function () { vitals(); });
-  wrap('switchPage', function (r, prev, name) { requestAnimationFrame(function () { positionInk(); }); if (prev !== name) enterPage(name, prev); }, function () { var a = document.querySelector('.page.active'); return a ? a.dataset.page : null; });
-  wrap('applyVisualTheme', function (r, prev) {
-    syncMode(); requestAnimationFrame(function () { positionInk(true); });
-    if (ready && prev && prev !== mode()) curtain(mode(), false);
-  }, function () { return mode(); });
-  new MutationObserver(function () { if (root.getAttribute('data-rx') !== mode()) { syncMode(); positionInk(true); } }).observe(root, { attributes: true, attributeFilter: ['data-visual-theme'] });
 
+  /* ---------- eventos da ficha ---------------------------------------- */
+  new MutationObserver(function () { if (root.getAttribute('data-rx') !== mode()) { syncMode(); } }).observe(root, { attributes: true, attributeFilter: ['data-visual-theme'] });
+  document.addEventListener('sheet:render', function () { syncMode(); decorate(); requestAnimationFrame(function () { positionInk(!ready); }); animateNumbers(); vitals(); });
+  document.addEventListener('sheet:page', function (e) { requestAnimationFrame(function () { positionInk(); }); enterPage(e.detail.to); });
+  document.addEventListener('sheet:mode', function (e) { if (ready) curtain(e.detail, false); });
+  document.addEventListener('sheet:round', function () { var b = document.querySelector('.round-badge'); if (b) { var r = b.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height / 2, 1.8); } });
+  document.addEventListener('sheet:levelup', function () { burst(innerWidth / 2, innerHeight / 2, 3.5); flash('level'); });
+  document.addEventListener('sheet:route', function (e) { var b = document.querySelector('.route-opt.on'); if (b) { var r = b.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height / 2, 1.6); } });
+  document.addEventListener('sheet:combat', function () { flash('combat'); });
   function init() {
-    document.body.appendChild(fx); sizeFx(); startSky(); refresh(); snapshotNumbers();
-    var hasPlayed = false; try { hasPlayed = sessionStorage.getItem('rx-intro') === '1'; sessionStorage.setItem('rx-intro', '1'); } catch (e) {}
-    if (!hasPlayed) curtain(mode(), true);
-    setTimeout(function () { ready = true; positionInk(true); snapshotNumbers(); var a = document.querySelector('.page.active'); if (a) enterPage(a.dataset.page); }, 60);
-    document.fonts && document.fonts.ready.then(function () { positionInk(true); });
+    document.body.appendChild(fx); sizeFx(); startSky(); decorate();
+    var played = false; try { played = sessionStorage.getItem('rx-intro2') === '1'; sessionStorage.setItem('rx-intro2', '1'); } catch (e) {}
+    if (!played) curtain(mode(), true);
+    setTimeout(function () { ready = true; positionInk(true); animateNumbers(); vitals(); enterPage(); }, 80);
+    if (document.fonts) document.fonts.ready.then(function () { positionInk(true); });
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { setTimeout(init, 0); }); else setTimeout(init, 0);
-
-  window.RxFx = { burst: burst, curtain: curtain, refresh: refresh };
+  document.addEventListener('sheet:ready', init);
+  window.RxFx = {
+    burst: burst, curtain: curtain,
+    cast: function (slot, effect) { var r = slot === 'r' ? 2.6 : 1.2; burst(innerWidth / 2, innerHeight * .45, r); if (slot === 'r') flash('ult'); },
+    rune: function () { burst(innerWidth / 2, innerHeight * .4, 1.6); },
+    hurt: function () { flash('hurt'); }
+  };
 })();

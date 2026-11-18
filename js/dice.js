@@ -1,6 +1,6 @@
 /* ==========================================================================
    CONTOS DE RUNETERRA — runeterra-dice.js   (DADOS 3D)
-   Dados d4, d6, d8, d10, d12 e d20 desenhados em 3D no canvas, sem
+   Dados d3, d4, d6, d8, d10, d12 e d20 desenhados em 3D no canvas, sem
    bibliotecas (mesmo motor da ficha Persona — Phobia), com o visual de cada
    modalidade: cristal hextec, cartas de anime ou vidro estelar.
    • Botão flutuante abre o painel: testes de atributo (1d20 + atributo),
@@ -107,7 +107,7 @@
     s.faces.forEach(function (f) { if (!f.val) f.val = miss.shift(); });
     SHAPES[sides] = s; return s;
   }
-  function shapeFor(sides) { return [4, 6, 8, 10, 12, 20].indexOf(sides) >= 0 ? shape(sides) : shape(20); }
+  function shapeFor(sides) { if (sides === 3) return shape(6); return [4, 6, 8, 10, 12, 20].indexOf(sides) >= 0 ? shape(sides) : shape(20); }
 
   /* orientação final: face com o valor virada para a câmera, número em pé */
   function finalMatrix(sh, val) {
@@ -251,7 +251,7 @@
     dice = vis.map(function (r, i) {
       var row = Math.floor(i / cols), col = i % cols, inRow = Math.min(cols, n - row * cols);
       var x = cx + (col - (inRow - 1) / 2) * R * 2.6, y = cy + (row - (rows - 1) / 2) * R * 2.6;
-      var sh = shapeFor(r.sides), fv = r.sides === sh.faces.length ? r.val : Math.max(1, Math.min(sh.faces.length, Math.ceil(r.val / r.sides * sh.faces.length)));
+      var sh = shapeFor(r.sides), fv = r.sides <= sh.faces.length ? r.val : Math.max(1, Math.min(sh.faces.length, Math.ceil(r.val / r.sides * sh.faces.length)));
       var fromLeft = T.m !== 'star-guardian';
       return { sh: sh, sides: r.sides, val: fv, real: r.val, col: T.cols[r.sides] || T.cols[20], R: R, x: x, y: y,
         sx: fromLeft ? -R * 2 - Math.random() * 120 : W / 2 + (Math.random() - .5) * W * .6, sy: fromLeft ? H * (.15 + Math.random() * .6) : -R * 2 - Math.random() * 100, hop: R * (1.2 + Math.random()),
@@ -268,16 +268,16 @@
   function showResult() {
     var c = current; if (!c) return;
     var nat = c.rolls.filter(function (r) { return r.sides === 20 && !r.drop; })[0];
-    var isCrit = nat && nat.val === 20, isFumble = nat && nat.val === 1, tg = TAGS[mode()] || TAGS.classic;
+    var isCrit = nat && nat.val >= (c.opts.crit || 20), isFumble = nat && nat.val === 1, tg = TAGS[mode()] || TAGS.classic;
     stage.classList.toggle('crit', !!isCrit); stage.classList.toggle('fumble', !!isFumble);
     if (isCrit && window.RxFx) { var r = stage.querySelector('.rd-canvas').getBoundingClientRect(); setTimeout(function () { RxFx.burst(innerWidth / 2, innerHeight * .38, 3); }, 50); }
-    var parts = c.rolls.map(function (r) { return '<span class="rd-r' + (r.drop ? ' drop' : '') + (r.sides === 20 && r.val === 20 ? ' hi' : '') + (r.sides === 20 && r.val === 1 ? ' lo' : '') + '"><small>d' + r.sides + '</small>' + (r.sign < 0 ? '−' : '') + r.val + '</span>'; }).join('');
+    var parts = c.rolls.map(function (r) { return '<span class="rd-r' + (r.drop ? ' drop' : '') + (r.sides === 20 && r.val >= (c.opts.crit || 20) ? ' hi' : '') + (r.sides === 20 && r.val === 1 ? ' lo' : '') + '"><small>d' + r.sides + '</small>' + (r.sign < 0 ? '−' : '') + r.val + '</span>'; }).join('');
     resultEl.innerHTML =
       (isCrit ? '<div class="rd-tag crit">' + tg[0] + '</div>' : isFumble ? '<div class="rd-tag fumble">' + tg[1] + '</div>' : '') +
       '<div class="rd-card"><small>' + esc(c.label) + (c.mode === 'vant' ? ' · VANTAGEM' : c.mode === 'desv' ? ' · DESVANTAGEM' : '') + '</small>' +
       '<div class="rd-total"><b>' + c.total + '</b>' + (c.unit ? '<em>' + esc(c.unit) + '</em>' : '') + '</div>' +
       '<div class="rd-parts">' + parts + (c.bonus ? '<span class="rd-bonus">' + (c.bonus > 0 ? '+' : '−') + Math.abs(c.bonus) + '</span>' : '') + '</div>' +
-      '<div class="rd-expr">' + esc(String(c.expr)) + (c.opts.extra ? ' ' + (c.opts.extra > 0 ? '+' : '') + c.opts.extra : '') + '</div>' +
+      (c.opts.note ? '<div class="rd-note">' + esc(c.opts.note) + '</div>' : '') + '<div class="rd-expr">' + esc(String(c.expr)) + (c.opts.extra ? ' ' + (c.opts.extra > 0 ? '+' : '') + c.opts.extra : '') + '</div>' +
       '<div class="rd-actions"><button type="button" class="rd-again">↻ Rolar de novo</button><button type="button" class="rd-close">Fechar</button></div></div>';
     resultEl.classList.add('in');
   }
@@ -291,15 +291,13 @@
   /* ---------- painel ---------- */
   var pool = {}, rmode = 'normal', extra = 0;
   function attrs() {
-    var out = [];
-    document.querySelectorAll('#attrGrid .attr-card').forEach(function (card) {
-      var code = ((card.querySelector('.attr-code') || {}).textContent || '').trim(), name = ((card.querySelector('.attr-name') || {}).textContent || '').trim();
-      var v = parseInt(((card.querySelector('.attr-total-num') || {}).textContent || '0').replace(/[^\d-]/g, ''), 10) || 0;
-      if (code) out.push({ code: code.toUpperCase(), name: name, v: v });
-    });
-    return out;
+    try { var c = window.current(), D = derived(c);
+      return [['ACERTO', 'Acerto', D.acerto], ['DEFESA', 'Defesa', D.defesa], ['APARAR', 'Aparar', D.aparar], ['VONTADE', 'Vontade', D.vontade], ['RESISTÊNCIA', 'Resistência', D.resist], ['INICIATIVA', 'Iniciativa', D.init]].map(function (x) { return { code: x[0], name: x[1], v: x[2] }; });
+    } catch (e) { return []; }
   }
-  function resolve(f) { var map = {}; attrs().forEach(function (a) { map[a.code] = a.v; }); return String(f).toUpperCase().replace(/\b(FOR|VIG|AGI|DES|LUT|INT|PRO|PRE)\b/g, function (_, k) { return map[k] != null ? map[k] : 0; }).replace(/D/g, 'd'); }
+  function profs() { try { var c = window.current(); return c.profs.map(function (p) { var d = R2.PROF[p.k] || { name: 'Proficiência' }; return { code: d.name.toUpperCase(), name: d.name, v: profBonus(c, p).total }; }); } catch (e) { return []; } }
+  function attrMap() { try { var c = window.current(), m = {}; R2.ATTRS.forEach(function (a) { m[a.code] = attr(c, a.k); }); return m; } catch (e) { return {}; } }
+  function resolve(f) { var map = attrMap(); return String(f).toUpperCase().replace(/\b(VID|POD|PRE|DES|RES|ESP)\b/g, function (_, k) { return map[k] != null ? map[k] : 0; }).replace(/D/g, 'd'); }
   function sgn(n) { return (n >= 0 ? '+' : '') + n; }
   var BRAND = { classic: ['CÓDICE RÚNICO', 'Rolar <span>dados</span>'], 'battle-academia': ['ARQUIVO DE COMBATE', 'Rolar <span>dados!</span>'], 'star-guardian': ['PRIMEIRA ESTRELA', 'Rolar <span>dados</span>'] };
   function buildPanel() {
@@ -325,8 +323,8 @@
   }
   function paintPanel() {
     if (!panelEl || panelEl.hidden) return;
-    var A = attrs(), br = BRAND[mode()] || BRAND.classic;
-    var diceBtns = [4, 6, 8, 10, 12, 20, 100].map(function (s) {
+    var A = attrs(), P = profs(), br = BRAND[mode()] || BRAND.classic;
+    var diceBtns = [3, 4, 6, 8, 10, 12, 20, 100].map(function (s) {
       return '<div class="rd-die"><button type="button" data-rd-add="' + s + '" title="Adicionar d' + s + '"><i class="rd-ico d' + s + '"></i><b>d' + s + '</b></button>' +
         (pool[s] ? '<span>' + pool[s] + '</span><button type="button" class="rd-sub" data-rd-sub="' + s + '" aria-label="Tirar um d' + s + '">−</button>' : '') + '</div>';
     }).join('');
@@ -335,11 +333,12 @@
       '<header><div><small>' + br[0] + '</small><b>' + br[1] + '</b></div><button type="button" class="rd-x" data-rd-x aria-label="Fechar">×</button></header>' +
       '<div class="rd-modes">' + [['desv', 'Desvantagem'], ['normal', 'Normal'], ['vant', 'Vantagem']].map(function (m) { return '<button type="button" data-rd-mode="' + m[0] + '" class="' + (rmode === m[0] ? 'on' : '') + '">' + m[1] + '</button>'; }).join('') +
         '<label>Bônus extra<input id="rdExtra" type="number" value="' + (extra || '') + '" placeholder="0"></label></div>' +
-      (A.length ? '<h4>Teste de atributo <small>1d20 + atributo</small></h4><div class="rd-tests">' + A.map(function (a) { return '<button type="button" data-rd-test="TESTE DE ' + esc(a.code) + '" data-rd-bonus="' + a.v + '" title="' + esc(a.name) + '"><b>' + esc(a.code) + '</b><small>' + sgn(a.v) + '</small></button>'; }).join('') + '</div>' : '') +
-      '<h4>Trocando Golpes <small>Rota Comum</small></h4><div class="rd-tests two"><button type="button" data-rd-expr="1d6" data-rd-label="TROCANDO GOLPES · CORPO A CORPO" data-rd-unit="golpes"><b>Corpo a corpo</b><small>1d6</small></button><button type="button" data-rd-expr="1d4" data-rd-label="TROCANDO GOLPES · DISTÂNCIA" data-rd-unit="golpes"><b>Distância</b><small>1d4</small></button></div>' +
+      (A.length ? '<h4>Testes <small>1d20 + bônus</small></h4><div class="rd-tests three">' + A.map(function (a) { return '<button type="button" data-rd-test="' + esc(a.code) + '" data-rd-bonus="' + a.v + '"><b>' + esc(a.name) + '</b><small>' + sgn(a.v) + '</small></button>'; }).join('') + '</div>' : '') +
+      (P.length ? '<h4>Proficiências <small>1d20 + atributo + rank</small></h4><div class="rd-tests two">' + P.map(function (a) { return '<button type="button" data-rd-test="' + esc(a.code) + '" data-rd-bonus="' + a.v + '"><b>' + esc(a.name) + '</b><small>' + sgn(a.v) + '</small></button>'; }).join('') + '</div>' : '') +
+      '<h4>Trocando Golpes <small>Rota Comum</small></h4><div class="rd-tests two"><button type="button" data-rd-expr="1d4" data-rd-label="TROCANDO GOLPES · CORPO A CORPO" data-rd-unit="trocas"><b>Corpo a corpo</b><small>1d4</small></button><button type="button" data-rd-expr="1d3" data-rd-label="TROCANDO GOLPES · DISTÂNCIA" data-rd-unit="trocas"><b>Distância</b><small>1d3</small></button></div>' +
       '<h4>Dados livres' + (poolTxt ? ' <small>' + poolTxt + '</small>' : '') + '</h4><div class="rd-dice">' + diceBtns + '</div>' +
       '<div class="rd-poolrow"><button type="button" class="rd-go" data-rd-pool ' + (poolTxt ? '' : 'disabled') + '>Rolar ' + (poolTxt || '') + '</button>' + (poolTxt ? '<button type="button" data-rd-clear>Limpar</button>' : '') + '</div>' +
-      '<form class="rd-form"><input id="rdExpr" placeholder="Fórmula: 2d6+FOR, 1d20+3…" autocomplete="off"><button type="submit">Rolar</button></form>' +
+      '<form class="rd-form"><input id="rdExpr" placeholder="Fórmula: 2d6+POD, 1d20+PRE…" autocomplete="off"><button type="submit">Rolar</button></form>' +
       (LOG.length ? '<h4>Últimas rolagens <button type="button" class="rd-clearlog" data-rd-clearlog>Limpar</button></h4><ol class="rd-log">' + LOG.map(function (l) { return '<li><span>' + esc(l.label) + '</span><em>' + esc(l.expr) + '</em><b>' + l.total + '</b></li>'; }).join('') + '</ol>' : '');
     placePanel();
   }
@@ -389,13 +388,7 @@
     document.body.appendChild(b); makeDraggable(b);
   }
 
-  /* "Trocando Golpes" da ficha também mostra o dado rolando */
-  document.addEventListener('click', function (e) {
-    var t = e.target.closest && e.target.closest('[data-route-roll-trade]'); if (!t) return;
-    var melee = t.dataset.routeRollTrade === 'melee';
-    setTimeout(function () { var box = document.getElementById('routeTradeResult'), b = box && box.querySelector('b'); var v = b ? parseInt(b.textContent, 10) : NaN; if (v) roll(melee ? '1d6' : '1d4', 'TROCANDO GOLPES · ' + (melee ? 'CORPO A CORPO' : 'DISTÂNCIA'), { forced: [v], unit: 'golpes' }); }, 0);
-  });
-
+  document.addEventListener('sheet:render', function () { if (panelEl && !panelEl.hidden) paintPanel(); });
   window.RxDice = { roll: roll, open: togglePanel, parse: parseExpr };
   function init() { if (!document.body) { setTimeout(init, 100); return; } fab(); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
