@@ -3,27 +3,35 @@
 'use strict';
 const APPEARANCE_KEYS=['primary','accent','background','paper','surface','surfaceAlt','header','text','hp','mp','xp','ph'];
 const APPEARANCE_DEFAULTS={
+ classic:{primary:'#0ac8b9',accent:'#c8aa6e',background:'#010a13',paper:'#08131f',surface:'#0c1a28',surfaceAlt:'#122536',header:'#040d17',text:'#f0e6d2',hp:'#3fcf8e',mp:'#2fa6e8',xp:'#c8aa6e',ph:'#a586ec'},
+ 'battle-academia':{primary:'#e3263f',accent:'#ffb81c',background:'#0b1433',paper:'#eef1f8',surface:'#ffffff',surfaceAlt:'#e2e8f6',header:'#111c47',text:'#121a3a',hp:'#19b27a',mp:'#2f7de1',xp:'#f0a400',ph:'#8b5cf6'},
+ 'star-guardian':{primary:'#ff7ac8',accent:'#ffd37a',background:'#0a0520',paper:'#150d31',surface:'#1e1544',surfaceAlt:'#2a1d58',header:'#0e0828',text:'#fbefff',hp:'#6ff0c2',mp:'#8fb8ff',xp:'#ffd37a',ph:'#c69bff'}
+};
+/* Cores padrão anteriores ao redesenho: quem nunca personalizou passa para as novas. */
+const APPEARANCE_LEGACY_DEFAULTS={
  classic:{primary:'#42685b',accent:'#b88c48',background:'#21170f',paper:'#e8d8b4',surface:'#f4e8cd',surfaceAlt:'#dfcba0',header:'#29231c',text:'#352a20',hp:'#5d855e',mp:'#4f88a5',xp:'#b38b3e',ph:'#8870a1'},
  'battle-academia':{primary:'#147eae',accent:'#58d7ed',background:'#0e1b35',paper:'#deebf7',surface:'#f5faff',surfaceAlt:'#d2e5f4',header:'#102849',text:'#193b58',hp:'#3b9e88',mp:'#328fbe',xp:'#cb9339',ph:'#9270be'},
  'star-guardian':{primary:'#df9ecf',accent:'#b6bdff',background:'#110d22',paper:'#211a35',surface:'#2e2446',surfaceAlt:'#392c54',header:'#171125',text:'#f1e6fb',hp:'#79d5b4',mp:'#8cbff1',xp:'#e2c37d',ph:'#dba4e9'}
 };
 const APPEARANCE_PRESETS={
  classic:[
-  {id:'codex',name:'Códice de Runeterra',note:'Pergaminho, jade e bronze.',colors:{}},
+  {id:'codex',name:'Hextec de Runeterra',note:'Noite azul, ouro e brilho hextec.',colors:{}},
+  {id:'parchment',name:'Pergaminho Antigo',note:'O códice original: papel, jade e bronze.',colors:{primary:'#42685b',accent:'#b88c48',background:'#21170f',paper:'#e8d8b4',surface:'#f4e8cd',surfaceAlt:'#dfcba0',header:'#29231c',text:'#352a20',hp:'#5d855e',mp:'#4f88a5',xp:'#b38b3e',ph:'#8870a1'}},
   {id:'ionia',name:'Jardins de Ionia',note:'Jade, papel claro e flor de cerejeira.',colors:{primary:'#477563',accent:'#c7798f',background:'#182c29',paper:'#e1e9dc',surface:'#f3f6e9',surfaceAlt:'#d2dfca',header:'#203c34',text:'#263e31'}},
   {id:'noxus',name:'Legado de Noxus',note:'Carvão, rubro e aço escuro.',colors:{primary:'#c95161',accent:'#d7b181',background:'#151216',paper:'#29252b',surface:'#343039',surfaceAlt:'#403641',header:'#201a22',text:'#f4e7e6',hp:'#a9bf87',mp:'#8ca8c9',xp:'#d5b280',ph:'#b796c9'}},
   {id:'shurima',name:'Sol de Shurima',note:'Areia clara e ouro solar.',colors:{primary:'#98712e',accent:'#d0a24e',background:'#382c1b',paper:'#ecdfb9',surface:'#fff4d7',surfaceAlt:'#e3cca0',header:'#4b371d',text:'#4b351c'}},
   {id:'freljord',name:'Gelo de Freljord',note:'Azul glacial e tinta profunda.',colors:{primary:'#32718b',accent:'#7bc6d4',background:'#142b38',paper:'#d9e9ec',surface:'#f2faf9',surfaceAlt:'#c6dfe5',header:'#193748',text:'#233f4d'}}
  ],
  'battle-academia':[
-  {id:'academy',name:'Academia de Batalha',note:'Painéis azuis e circuitos em ciano.',colors:{}},
+  {id:'academy',name:'Academia de Batalha',note:'Uniforme marinho, carmesim e ouro.',colors:{}},
+  {id:'circuit',name:'Circuito Ciano',note:'O painel original: azul e ciano.',colors:{primary:'#147eae',accent:'#58d7ed',background:'#0e1b35',paper:'#deebf7',surface:'#f5faff',surfaceAlt:'#d2e5f4',header:'#102849',text:'#193b58',hp:'#3b9e88',mp:'#328fbe',xp:'#cb9339',ph:'#9270be'}},
   {id:'crimson',name:'Divisão Carmesim',note:'Branco técnico e energia vermelha.',colors:{primary:'#b24457',accent:'#e6a25a',background:'#241b2e',paper:'#ece4ed',surface:'#fff8fa',surfaceAlt:'#e7d4dd',header:'#352334',text:'#412d43'}},
   {id:'neon',name:'Laboratório Neon',note:'Roxo noturno e luz elétrica.',colors:{primary:'#9c8deb',accent:'#54dcca',background:'#111226',paper:'#1d2038',surface:'#282c47',surfaceAlt:'#343653',header:'#14182d',text:'#ebefff',hp:'#65d4a7',mp:'#80c8e7',xp:'#e7bd75',ph:'#b7a4ee'}},
   {id:'elite',name:'Classe de Elite',note:'Azul-marinho e detalhes dourados.',colors:{primary:'#a07735',accent:'#e0b76b',background:'#17202e',paper:'#e8e6dc',surface:'#fffdf4',surfaceAlt:'#dad9ca',header:'#202f47',text:'#2e3846'}},
   {id:'mint',name:'Protocolo Esmeralda',note:'Menta, cinza claro e grafite.',colors:{primary:'#298379',accent:'#6bcfba',background:'#152c30',paper:'#dfedeb',surface:'#f5fcf9',surfaceAlt:'#c9e2dc',header:'#1c3a3c',text:'#234d49'}}
  ],
  'star-guardian':[
-  {id:'first-star',name:'Primeira Estrela',note:'Constelações em uma noite violeta.',colors:{}},
+  {id:'first-star',name:'Primeira Estrela',note:'Noite violeta, rosa estelar e ouro.',colors:{}},
   {id:'rose',name:'Rosa Celestial',note:'Rosa suave, pérola e lavanda.',colors:{primary:'#a35f95',accent:'#c796c8',background:'#281b42',paper:'#eee5f6',surface:'#fff7fc',surfaceAlt:'#e6d5ee',header:'#2e2046',text:'#53385f',hp:'#5f9f89',mp:'#609bc5',xp:'#b18c3b',ph:'#aa73bb'}},
   {id:'aurora',name:'Aurora Azul',note:'Céu profundo e brilho de gelo.',colors:{primary:'#8ccfe8',accent:'#b7a7eb',background:'#101c31',paper:'#1b2d47',surface:'#263b56',surfaceAlt:'#304865',header:'#14243a',text:'#e8f5ff',hp:'#8ad6b7',mp:'#86caeb',xp:'#e4cb8b',ph:'#b9a9eb'}},
   {id:'solar',name:'Estrela Dourada',note:'Luz de pêssego, ouro e porcelana.',colors:{primary:'#ae7352',accent:'#d4ab5e',background:'#38283d',paper:'#f4e4db',surface:'#fff6e9',surfaceAlt:'#ecd4ca',header:'#483047',text:'#654452',hp:'#7e9b6b',mp:'#7aa7bf',xp:'#bd8e3f',ph:'#b38bae'}},
@@ -34,8 +42,8 @@ const APPEARANCE_FONTS={
  mode:null,
  readable:{body:"'Nunito Sans',Arial,sans-serif",heading:"'Nunito Sans',Arial,sans-serif"},
  runic:{body:"'Alegreya Sans',Georgia,serif",heading:'Cinzel,Georgia,serif'},
- tactical:{body:"'Barlow Condensed',Arial,sans-serif",heading:'Teko,Arial,sans-serif'},
- celestial:{body:"'Nunito Sans',Arial,sans-serif",heading:'Marcellus,Georgia,serif'}
+ tactical:{body:"'Barlow Condensed',Arial,sans-serif",heading:"Anton,'Barlow Condensed',Arial,sans-serif"},
+ celestial:{body:"Quicksand,'Nunito Sans',Arial,sans-serif",heading:'Marcellus,Georgia,serif'}
 };
 const APPEARANCE_PATTERNS=['mode','runes','grid','stars','diagonal','none'];
 let appearanceSession=null;
@@ -63,7 +71,11 @@ function ensureAppearance(c=current()){
  if(!c.appearance.bySystem||typeof c.appearance.bySystem!=='object'||Array.isArray(c.appearance.bySystem))c.appearance.bySystem={};
  c.appearance.version=1;return c.appearance
 }
-function characterAppearance(c=current(),mode=sheetMode(c)){return sanitizeAppearance(ensureAppearance(c).bySystem[mode],mode)}
+function characterAppearance(c=current(),mode=sheetMode(c)){
+ const raw=ensureAppearance(c).bySystem[mode],t=sanitizeAppearance(raw,mode);
+ if(t.preset===APPEARANCE_PRESETS[mode][0].id){const legacy=APPEARANCE_LEGACY_DEFAULTS[mode];if(APPEARANCE_KEYS.every(k=>t.colors[k]===legacy[k]))t.colors={...APPEARANCE_DEFAULTS[mode]}}
+ return t
+}
 function appearancePreset(id,mode=sheetMode()){const p=APPEARANCE_PRESETS[mode].find(x=>x.id===id);if(!p)return null;return {...defaultAppearance(mode),preset:p.id,colors:{...APPEARANCE_DEFAULTS[mode],...p.colors}}}
 function applyCharacterAppearance(config=null){
  const c=current(),mode=sheetMode(),t=sanitizeAppearance(config||characterAppearance(c,mode),mode),p=t.colors,root=document.documentElement;
@@ -80,7 +92,7 @@ function applyCharacterAppearance(config=null){
  };
  for(const [k,v] of Object.entries(vars))root.style.setProperty(k,v);
  const font=APPEARANCE_FONTS[t.font]||({classic:APPEARANCE_FONTS.runic,'battle-academia':APPEARANCE_FONTS.tactical,'star-guardian':APPEARANCE_FONTS.celestial})[mode];root.style.setProperty('--ui-font',font.body);root.style.setProperty('--ui-heading',font.heading);
- root.style.setProperty('--ui-radius',t.radius==='mode'?({classic:'2px','battle-academia':'2px','star-guardian':'18px'})[mode]:t.radius+'px');
+ root.style.setProperty('--ui-radius',t.radius==='mode'?({classic:'2px','battle-academia':'0px','star-guardian':'20px'})[mode]:t.radius+'px');
  root.dataset.appearance='personal';root.dataset.appearanceDensity=t.density;root.dataset.appearancePattern=t.pattern==='mode'?({classic:'runes','battle-academia':'grid','star-guardian':'stars'})[mode]:t.pattern;root.dataset.appearanceFont=t.font;
  const modeIcon=$('#visualThemeBtn .ui-symbol use');if(modeIcon)modeIcon.setAttribute('href','#ui-'+SHEET_SYSTEMS[mode].icon);
  const meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.content=p.header;

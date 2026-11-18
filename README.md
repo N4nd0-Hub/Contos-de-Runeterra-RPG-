@@ -14,6 +14,16 @@ As 65 runas têm leitura por seções e um resumo de uso. Bônus passivos, ativ�
 
 Na Academia, cada habilidade pode pertencer a uma Arma Relicário e ser liberada por uma evolução. A arma deve estar equipada; habilidades e passivas de formas ainda indisponíveis não são aplicadas. Cada melhoria registra um marco da campanha e efeitos cumulativos, sem alterar os atributos base do personagem. Calçados Mágicos amplifica apenas botas identificadas pela categoria no inventário.
 
+## Visual e animações
+
+Cada modalidade tem identidade própria, aplicada por `runeterra-skin.css`:
+
+- **Runearcana:** códice hextec, com fundo azul-noite, molduras douradas, brilho ciano, motes flutuantes e um círculo rúnico girando ao fundo.
+- **Academia de Batalha:** ficha de aluno em estilo anime, com painéis em contorno grosso, sombras deslocadas, abas inclinadas, linhas de velocidade e uma faixa com o nome da página a cada troca.
+- **Star Guardian:** vidro estelar, com céu de estrelas que cintilam, estrelas cadentes, rastro de brilho no cursor e abas em pílula com gradiente.
+
+`runeterra-fx.js` cuida da abertura, da transição ao trocar de modalidade, do indicador deslizante das abas, dos números animados, das faíscas ao clicar e do tremor ou brilho quando Vida e Mana mudam. `runeterra-dice.js` traz dados 3D (d4 a d20 e d100) com visual de cada modalidade: o botão flutuante abre testes de atributo, Trocando Golpes, dados livres, fórmula e histórico, e o selo d20 em cada atributo rola o teste direto. Com "reduzir movimento" ativado no sistema, as animações são desligadas.
+
 ## Personalização
 
 O botão **Personalizar** abre um editor com prévia ao vivo. Cada personagem guarda uma aparência independente para cada modalidade. Há cinco paletas por modalidade, seletores de cor e códigos HEX para fundos, painéis, cabeçalho e recursos, além de contraste automático, fontes, espaçamento, textura, cantos, tamanho do texto e brilho. As formas de d20, painéis tecnológicos e estrelas continuam próprias de cada modalidade.
@@ -29,5 +39,6 @@ As mudanças só são gravadas ao salvar; cancelar recupera a aparência anterio
 - `runes.js`: organização das regras, bônus e registros de runas.
 - `relicary.js`: atributos, melhorias e habilidades imbuídas das Armas Relicário.
 - `rules.css`: leitura das regras e contraste dos controles.
+- `runeterra-skin.css`, `runeterra-fx.js` e `runeterra-dice.js`: visual dos três modos, animações e dados 3D.
 
-Hospedagem estática, sem build ou dependências. Mantenha os oito arquivos no mesmo diretório. O salvamento usa IndexedDB, com alternativa em localStorage; o backup JSON inclui modalidade, poderes, imagens das armas e evoluções. Backups anteriores continuam aceitos.
+Hospedagem estática, sem build ou dependências. Mantenha os onze arquivos no mesmo diretório. O salvamento usa IndexedDB, com alternativa em localStorage; o backup JSON inclui modalidade, poderes, imagens das armas e evoluções. Backups anteriores continuam aceitos.
