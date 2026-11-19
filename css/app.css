@@ -636,3 +636,17 @@ body.modal-open{overflow:hidden}
 .a-bonus{display:flex;align-items:center;gap:10px;margin-top:10px;padding:8px 10px;background:color-mix(in srgb,var(--rx-good) 10%,var(--rx-panel2));border:1px solid color-mix(in srgb,var(--rx-good) 40%,var(--rx-line));border-radius:var(--rx-r2)}
 .a-bonus>svg{font-size:22px;color:var(--rx-good)}.a-bonus span{flex:1}.a-bonus small{display:block;font-size:.62rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--rx-muted)}.a-bonus b{font-size:.88rem}
 .a-bonus.off{opacity:.6;filter:grayscale(.6)}
+
+/* atributos em destaque no topo do Perfil */
+.perfil-top .attrs-card{flex:1}
+.perfil-top .attr-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.perfil-mid{align-items:stretch}
+.perfil-mid .role-grid{grid-template-columns:minmax(0,1fr)}
+.perfil-mid .role-opt{display:grid;grid-template-columns:44px minmax(0,1fr) auto;grid-template-areas:"ic name hp" "ic lol lol" "ic en en";column-gap:12px;row-gap:2px;align-items:center;padding:10px 14px}
+.perfil-mid .role-opt:hover{transform:translateX(4px)}
+.perfil-mid .role-ic{grid-area:ic;font-size:30px}
+.perfil-mid .role-opt b{grid-area:name}
+.perfil-mid .role-hp{grid-area:hp}
+.perfil-mid .role-opt small{grid-area:lol}
+.perfil-mid .role-opt em{grid-area:en}
+@media (max-width:620px){.perfil-top .attr-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}

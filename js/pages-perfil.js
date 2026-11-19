@@ -10,10 +10,10 @@ function renderPerfil(c){
  return pageIntro('perfil',S.kicker+' / 01','Perfil','Quem é seu personagem, de onde vem e do que é capaz.')+
  `<div class="grid perfil-top">
    <div class="stack">${portraitCard(c)}</div>
-   <div class="stack">${roleCard(c)}${progressCard(c)}</div>
+   <div class="stack">${attrsCard(c)}</div>
   </div>
   ${identityCard(c)}
-  ${attrsCard(c)}
+  <div class="grid two perfil-mid">${progressCard(c)}${roleCard(c)}</div>
   ${derivedCard(c)}
   <div class="grid two">${profsCard(c)}${complicationsCard(c)}</div>
   ${descriptionCard(c)}`
