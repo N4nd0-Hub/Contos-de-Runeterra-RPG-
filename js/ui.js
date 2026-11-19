@@ -89,7 +89,7 @@ function renderHead(){
  <div class="head-vitals">
   <div class="vital hp">${icon('hp')}<div><small>HP</small><b>${hp}<i>/${D.hpMax}</i>${c.res.shield?`<em>+${c.res.shield}</em>`:''}</b>${meter(hp,D.hpMax,'hp')}</div></div>
   <div class="vital mp">${icon('mana')}<div><small>Mana</small><b>${mana}<i>/${D.manaMax}</i></b>${meter(mana,D.manaMax,'mp')}</div></div>
-  <div class="vital en">${icon('energia')}<div><small>Energia</small><b>${c.res.energy}<i>/10</i></b><span class="pips">${Array.from({length:10},(_,i)=>`<i class="${i<c.res.energy?'on':''}"></i>`).join('')}</span></div></div>
+  <div class="vital en">${icon('energia')}<div><small>Energia</small><b>${c.res.energy}<i>/${D.energyMax}</i></b><span class="pips">${Array.from({length:D.energyMax},(_,i)=>`<i class="${i<c.res.energy?'on':''}"></i>`).join('')}</span></div></div>
   <div class="vital xp">${icon('xp')}<div><small>${c.xp.mode==='esferas'?'Méritos':'XP'}</small><b>${c.xp.mode==='esferas'?`${x.merits}<i>/${x.meritsNeed}</i>`:`${x.value}<i>/${x.need}</i>`}</b>${meter(c.xp.mode==='esferas'?x.merits:x.value,c.xp.mode==='esferas'?x.meritsNeed:x.need,'xp')}</div></div>
  </div>`
 }

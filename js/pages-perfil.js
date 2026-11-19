@@ -127,15 +127,16 @@ ACT['close-modal']=()=>closeModal();
 /* ---------- derivados ---------- */
 function derivedCard(c){
  const D=derived(c),notes=D.runeNotes.filter(n=>['hp','mana','move','rd','rdMagic','hpPct'].includes(n[1]));
- return card({icon:'rd',kicker:'Valores derivados',title:'Números de combate',body:`<div class="derived-grid">
-  ${stat('HP Máximo',D.hpMax,{ic:'hp',sub:`${D.role.hp} do Papel + Vida × 50`})}
-  ${stat('Dano Base Físico',D.dbFis,{ic:'dano-fisico',sub:'Poder × 5'})}
-  ${stat('Dano Base Mágico',D.dbMag,{ic:'dano-magico',sub:'Espírito × 5'})}
-  ${stat('Cura Base',D.curaMag,{ic:'cura',sub:`Espírito × 5 · física ${D.curaFis}`})}
-  ${stat('Redução de Dano',D.rd,{ic:'rd',sub:D.rdMagic!==D.rd?`${D.rdMagic} contra Mágico`:'Resistência × 2'})}
-  ${stat('Movimento',fmt(D.move)+' m',{ic:'movimento',sub:'10 m + Destreza × 2,5'})}
+ const custom=formulaCustom(c),pas=passiveSources(c);
+ return card({icon:'rd',kicker:'Valores derivados',title:'Números de combate',actions:`${custom?'<span class="tag used">fórmulas ajustadas</span>':''}<button class="btn sm" data-act="formula-edit">${icon('settings-2')}Ajustar fórmulas e bônus</button>`,body:`<div class="derived-grid">
+  ${stat('HP Máximo',D.hpMax,{ic:'hp',sub:`${D.role.hp} do Papel + Vida × ${fmt(D.F.hpPerVida)}`})}
+  ${stat('Dano Base Físico',D.dbFis,{ic:'dano-fisico',sub:`Poder × ${fmt(D.F.dbPerPoder)}`})}
+  ${stat('Dano Base Mágico',D.dbMag,{ic:'dano-magico',sub:`Espírito × ${fmt(D.F.dbPerEsp)}`})}
+  ${stat('Cura Base',D.curaMag,{ic:'cura',sub:`Espírito × ${fmt(D.F.curaPerAttr)} · física ${D.curaFis}`})}
+  ${stat('Redução de Dano',D.rd,{ic:'rd',sub:D.rdMagic!==D.rd?`${D.rdMagic} contra Mágico`:`Resistência × ${fmt(D.F.rdPerRes)}`})}
+  ${stat('Movimento',fmt(D.move)+' m',{ic:'movimento',sub:`${fmt(D.F.moveBase)} m + Destreza × ${fmt(D.F.movePerDes)}`})}
   ${stat('Mana Máxima',D.manaMax,{ic:'mana',sub:`+${D.manaRegen} por rodada`})}
-  ${stat('Energia',`0 / 10`,{ic:'energia',sub:'carga da Ultimate'})}
+  ${stat('Energia',`${c.res.energy} / ${D.energyMax}`,{ic:'energia',sub:'carga da Ultimate'})}
   ${stat('Acerto',sgn(D.acerto),{ic:'acerto',sub:'1d20 + Precisão',roll:{expr:d20(D.acerto),label:'ACERTO'}})}
   ${stat('Defesa',sgn(D.defesa),{ic:'defesa',sub:'1d20 + Destreza',roll:{expr:d20(D.defesa),label:'DEFESA'}})}
   ${stat('Aparar',sgn(D.aparar),{ic:'aparar',sub:'1d20 + Precisão (corpo a corpo)',roll:{expr:d20(D.aparar),label:'APARAR'}})}
@@ -144,7 +145,7 @@ function derivedCard(c){
   ${stat('Iniciativa',sgn(D.init),{ic:'iniciativa',sub:'1d20 + Destreza',roll:{expr:d20(D.init),label:'INICIATIVA'}})}
   ${stat('DT Física',D.dtFis,{ic:'dt',sub:'10 + Poder + custo ÷ 10'})}
   ${stat('DT Mágica',D.dtMag,{ic:'dt',sub:'10 + Espírito + custo ÷ 10'})}
- </div>${notes.length?`<p class="hint">${icon('runas')}Incluído: ${notes.map(n=>`${n[0]} (${n[1]==='hpPct'?'+'+n[2]+'% HP':sgn(n[2])+' '+(BONUS_STATS[n[1]]||n[1])})`).join(' · ')}</p>`:''}`})
+ </div>${notes.length?`<p class="hint">${icon('runas')}Incluído: ${notes.map(n=>`${n[0]} (${n[1]==='hpPct'?'+'+n[2]+'% HP':sgn(n[2])+' '+(BONUS_STATS[n[1]]||n[1])})`).join(' · ')}</p>`:''}${pas.length?`<p class="hint">${icon('passiva')}Passivas: ${pas.map(a=>`${esc(a.name)} (${bonusText(a.bonuses)})`).join(' · ')}</p>`:''}${Object.values((c.formula||{}).manual||{}).some(v=>num(v))?`<p class="hint">${icon('settings-2')}Bônus manuais: ${Object.entries(c.formula.manual).filter(([k,v])=>num(v)).map(([k,v])=>`${sgn(v)} ${MANUAL_LABELS[k]||k}`).join(' · ')}</p>`:''}`})
 }
 
 /* ---------- proficiências ---------- */
@@ -194,3 +195,22 @@ function descriptionCard(c){
   ${fieldArea('Anotações','notes',c.notes,'Qualquer coisa que queira lembrar.','full')}
  </div>`})
 }
+
+/* ---------- fórmulas e bônus manuais ---------- */
+ACT['formula-edit']=()=>{
+ const c=current(),f=c.formula||{},role=R2.ROLES[c.identity.role],man=f.manual||{};
+ const inp=(k,ph,val)=>`<input class="input" type="number" step="any" data-fk="${k}" value="${val??''}" placeholder="${ph}">`;
+ openModal(`${icon('settings-2')} Fórmulas e bônus da ficha`,`
+  <p class="hint">${icon('info')}Campos vazios usam a regra do livro. Vale só para ${esc(c.name||'este personagem')}.</p>
+  <h3 class="sub">${icon('hp')}Vida e Mana do Papel</h3>
+  <div class="form-grid"><div class="field"><label>HP base do Papel (${role.name}: ${role.hp})</label>${inp('roleHp',role.hp,f.roleHp)}</div>
+   <div class="field"><label>${FORMULA_LABELS.manaBase[0]} (${FORMULA_LABELS.manaBase[1]})</label>${inp('manaBase',FORMULA_DEFAULTS.manaBase,f.manaBase)}</div></div>
+  <h3 class="sub">${icon('upgrade')}Multiplicadores</h3>
+  <div class="form-grid three">${Object.keys(FORMULA_DEFAULTS).filter(k=>k!=='manaBase').map(k=>`<div class="field"><label>${FORMULA_LABELS[k][0]}</label>${inp(k,FORMULA_DEFAULTS[k],f[k])}<small class="hint">Livro: ${FORMULA_LABELS[k][1]}</small></div>`).join('')}</div>
+  <h3 class="sub">${icon('plus')}Bônus por fora</h3>
+  <p class="hint">Somados direto na ficha, para itens, bênçãos ou ajustes do Mestre que não estão em outro lugar.</p>
+  <div class="form-grid three">${Object.entries(MANUAL_LABELS).map(([k,l])=>`<div class="field"><label>${l}</label><input class="input" type="number" step="any" data-mk="${k}" value="${num(man[k])||''}" placeholder="0"></div>`).join('')}</div>
+  <div class="modal-actions"><button class="btn danger ghost" data-act="formula-reset">${icon('rotate-ccw')}Voltar ao livro</button><button class="btn ghost" data-act="close-modal">Cancelar</button><button class="btn primary" data-act="formula-save">${icon('check')}Salvar</button></div>`,null,'wide')
+};
+ACT['formula-save']=()=>{const c=current(),f={manual:{}};$$('[data-fk]').forEach(i=>{if(i.value.trim()!=='')f[i.dataset.fk]=Number(i.value)});$$('[data-mk]').forEach(i=>{if(num(i.value))f.manual[i.dataset.mk]=Number(i.value)});c.formula=f;closeModal();commit();toast('Fórmulas atualizadas.','good')};
+ACT['formula-reset']=()=>{if(!confirm('Voltar todas as fórmulas e bônus manuais para a regra do livro?'))return;current().formula={manual:{}};closeModal();commit()};

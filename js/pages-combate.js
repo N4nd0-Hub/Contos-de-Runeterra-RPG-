@@ -31,14 +31,14 @@ function renderCombate(c){
 
 /* ---------- vida, mana e energia ---------- */
 function vitalsPanel(c){
- const D=derived(c),hp=hpNow(c),mp=manaNow(c),en=c.res.energy;
+ const D=derived(c),hp=hpNow(c),mp=manaNow(c),en=c.res.energy,EM=D.energyMax;
  return `<div class="vitals-panel">
   <div class="vbox hp"><header>${icon('hp')}<small>HP</small><b>${hp}<i>/${D.hpMax}</i></b>${c.res.shield?`<span class="shield-badge">${icon('escudo')}${c.res.shield}</span>`:''}</header>${meter(hp,D.hpMax,'hp big')}${c.res.shield?meter(c.res.shield,D.hpMax,'shield'):''}
    <div class="vbtns"><button class="btn sm" data-act="hp-d" data-d="-10">−10</button><button class="btn sm" data-act="hp-d" data-d="10">+10</button><button class="btn sm" data-act="hp-full">${icon('cura')}Curar tudo</button></div></div>
   <div class="vbox mp"><header>${icon('mana')}<small>Mana</small><b>${mp}<i>/${D.manaMax}</i></b><span class="regen">+${D.manaRegen}/rodada</span></header>${meter(mp,D.manaMax,'mp big')}
    <div class="vbtns"><button class="btn sm" data-act="mp-d" data-d="-10">−10</button><button class="btn sm" data-act="mp-d" data-d="10">+10</button><button class="btn sm" data-act="mp-full">${icon('mana')}Restaurar</button></div></div>
-  <div class="vbox en ${en>=10?'ready':''}"><header>${icon('energia')}<small>Energia</small><b>${en}<i>/10</i></b>${en>=10?'<span class="ult-ready">ULTIMATE PRONTA</span>':''}</header>
-   <div class="energy-pips">${Array.from({length:10},(_,i)=>`<button type="button" class="${i<en?'on':''}" data-act="en-set" data-v="${i+1}" aria-label="Energia ${i+1}"></button>`).join('')}</div>
+  <div class="vbox en ${en>=EM?'ready':''}"><header>${icon('energia')}<small>Energia</small><b>${en}<i>/${EM}</i></b>${en>=EM?'<span class="ult-ready">ULTIMATE PRONTA</span>':''}</header>
+   <div class="energy-pips" style="grid-template-columns:repeat(${EM},1fr)">${Array.from({length:EM},(_,i)=>`<button type="button" class="${i<en?'on':''}" data-act="en-set" data-v="${i+1}" aria-label="Energia ${i+1}"></button>`).join('')}</div>
    <div class="vbtns"><button class="btn sm" data-act="hit">${icon('acerto')}Acertei</button><button class="btn sm" data-act="en-role" title="${esc(R2.ROLES[c.identity.role].energy)}">${icon(R2.ROLES[c.identity.role].icon)}Gatilho de ${R2.ROLES[c.identity.role].name}</button></div></div>
  </div>`
 }
@@ -48,15 +48,15 @@ ACT['mp-d']=el=>{const c=current(),D=derived(c);c.res.mana=clamp(manaNow(c)+num(
 ACT['mp-full']=()=>{current().res.mana=null;commit()};
 ACT['en-set']=el=>{const c=current(),v=num(el.dataset.v);c.res.energy=c.res.energy===v?v-1:v;commit()};
 ACT.hit=()=>{const c=current();let msg=[];
- if(!c.combat.hitThisTurn&&!condMods(c).noRegen){c.res.energy=Math.min(10,c.res.energy+1);c.combat.hitThisTurn=true;msg.push('+1 de Energia (primeiro acerto do turno)')}
+ if(!c.combat.hitThisTurn&&!condMods(c).noRegen){c.res.energy=Math.min(derived(c).energyMax,c.res.energy+1);c.combat.hitThisTurn=true;msg.push('+1 de Energia (primeiro acerto do turno)')}
  const g=gainCharges(1);if(g)msg.push(g);logC('Acerto: '+(msg.join(' · ')||'sem bônus'));commit();toast(msg.join(' · ')||'Energia do turno já foi ganha.','good')};
-ACT['en-role']=()=>{const c=current();if(c.combat.roleTrigger===c.combat.round&&c.combat.active)return toast('O gatilho de Papel só vale 1 vez por rodada.','bad');c.combat.roleTrigger=c.combat.round;c.res.energy=Math.min(10,c.res.energy+1);logC('Gatilho de Papel: +1 de Energia');commit()};
+ACT['en-role']=()=>{const c=current();if(c.combat.roleTrigger===c.combat.round&&c.combat.active)return toast('O gatilho de Papel só vale 1 vez por rodada.','bad');c.combat.roleTrigger=c.combat.round;c.res.energy=Math.min(derived(c).energyMax,c.res.energy+1);logC('Gatilho de Papel: +1 de Energia');commit()};
 
 ACT['start-combat']=()=>{const c=current();Object.assign(c.combat,{active:true,round:1,used:{},hitThisTurn:false,chargesThisTurn:0,roleTrigger:0});c.res.mana=null;c.res.energy=0;c.res.shield=0;c.runes.charges={};
  c.combat.coracao=!!runeRank(c,'Coração da Montanha');c.combat.log=[];logC('Combate iniciado. Rodada 1.','start');commit();toast('Combate iniciado! Escolha sua Rota.','good');document.dispatchEvent(new CustomEvent('sheet:combat'))};
 ACT['end-combat']=()=>{const c=current();c.combat.active=false;c.combat.coracao=false;logC('Combate encerrado.');commit()};
 ACT['new-round']=()=>{const c=current(),D=derived(c),cm=condMods(c);c.combat.round++;c.combat.used={};c.combat.hitThisTurn=false;c.combat.chargesThisTurn=0;c.combat.routeUsed='';
- const msgs=[];if(!cm.noRegen){c.res.mana=Math.min(D.manaMax,manaNow(c)+D.manaRegen);c.res.energy=Math.min(10,c.res.energy+1);msgs.push(`+${D.manaRegen} Mana`,'+1 Energia')}else msgs.push('Eletrificado: sem Mana e sem Energia');
+ const msgs=[];if(!cm.noRegen){c.res.mana=Math.min(D.manaMax,manaNow(c)+D.manaRegen);c.res.energy=Math.min(derived(c).energyMax,c.res.energy+1);msgs.push(`+${D.manaRegen} Mana`,'+1 Energia')}else msgs.push('Eletrificado: sem Mana e sem Energia');
  let r;if((r=runeRank(c,'Condicionamento'))){const mx=[3,5,8][r-1];c.runes.counters['Condicionamento']=Math.min(mx,counter(c,'Condicionamento')+1)}
  c.res.shield=0;
  const dots=[];c.conditions.forEach(x=>{const d=R2.COND[x.k]||R2.STAGE[x.k];if(d?.dot){const v=Array.isArray(d.dot)?d.dot[(x.stage||1)-1]:d.dot;dots.push(`${d.name} ${v}`)}if(num(x.rounds)>0)x.rounds--});
@@ -98,15 +98,15 @@ function kitCombatCard(c){
 }
 function combatAbility(c,a){
  const sel=num(c.combat.manaSel?.[a.id])||null,K=abilityCalc(c,a,sel),slot=R2.SLOT[a.slot],E=R2.EFFECTS[a.effect];
- const v=finalValue(c,a,K),en=c.res.energy,mp=manaNow(c);
- const can=K.ult?en>=10:K.passive?false:a.slot==='basico'?true:mp>=K.realCost;
+ const v=finalValue(c,a,K),en=c.res.energy,mp=manaNow(c),EM=derived(c).energyMax,pay=K.manaManual?K.realCost:(K.ult||a.slot==='basico'||a.noMana?0:K.realCost);
+ const can=K.passive?false:(K.ult?en>=EM:true)&&mp>=pay;
  const valTxt=a.effect==='buff'||a.effect==='debuff'?`${fmt(K.choices)} escolha(s)`:a.effect==='movimento'?`${K.meters} m`:a.effect==='utilidade'||a.effect==='condicao'?`DT ${K.dt}`:v;
  const amp=!K.ult&&!K.passive&&a.slot!=='basico'&&!a.noAmp&&!a.noMana&&K.maxMana>K.minCost;
- return `<article class="cab slot-${a.slot} ${K.ult&&en>=10?'ready':''} ${a.dmgType}">
+ return `<article class="cab slot-${a.slot} ${K.ult&&en>=EM?'ready':''} ${a.dmgType}">
   <span class="cab-key">${slot.key}</span>
   <div class="cab-main"><b>${esc(a.name||slot.name)}</b><small>${E.name} ${a.dmgType==='magico'?'mágico':'físico'}${K.pen?` · ignora ${K.pen} RD`:''}${K.crit<20?` · crítico ${K.crit}–20`:''}</small>
    <div class="cab-val">${icon(E.icon)}<strong>${valTxt}</strong>${a.effect!=='condicao'&&a.effect!=='utilidade'&&(K.conds||a.effect==='debuff')?`<span>DT ${K.dt}</span>`:''}</div></div>
-  <div class="cab-cost">${K.ult?`<span class="cost en">${icon('energia')}10</span>`:K.passive?'<span class="cost">passiva</span>':a.slot==='basico'?'<span class="cost">0</span>':a.noMana?'<span class="cost">sem Mana</span>':`<span class="cost mp">${icon('mana')}${K.realCost}${K.cut?`<i>(${K.mana})</i>`:''}</span>`}
+  <div class="cab-cost">${K.ult?`<span class="cost en">${icon('energia')}${EM}</span>`:''}${K.passive&&!pay?'<span class="cost">passiva</span>':''}${!K.ult&&!K.passive&&!pay?`<span class="cost">${a.noMana?'sem Mana':'0'}</span>`:''}${pay?`<span class="cost mp">${icon('mana')}${pay}${K.cut?`<i>(${K.mana})</i>`:''}</span>`:''}
    ${amp?`<span class="amp">${stepper('mana-sel',K.mana,`data-id="${a.id}"`)}</span>`:''}</div>
   <div class="cab-btns">${K.hit!=null&&!K.passive&&a.effect!=='movimento'?rollBtn(d20(K.hit),'ACERTO · '+(a.name||slot.name).toUpperCase()):''}${!K.passive?`<button class="btn sm ${can?'primary':''}" data-act="cast" data-id="${a.id}" ${can?'':'disabled'}>Usar</button>`:''}</div>
  </article>`
@@ -115,12 +115,13 @@ ACT['mana-sel']=el=>{const c=current(),a=c.kit.find(x=>x.id===el.dataset.id),K=a
 ACT.cast=el=>{
  const c=current(),a=c.kit.find(x=>x.id===el.dataset.id);if(!a)return;const K=abilityCalc(c,a,num(c.combat.manaSel?.[a.id])||null),v=finalValue(c,a,K);
  if(c.conditions.some(x=>x.k==='silenciado')&&K.realCost>0)return toast('Silenciado: não pode usar habilidades que gastam Mana.','bad');
- if(K.ult){if(c.res.energy<10)return toast('A Ultimate precisa de 10 de Energia.','bad');c.res.energy=0}
- else if(a.slot!=='basico'&&!a.noMana){if(manaNow(c)<K.realCost)return toast('Mana insuficiente.','bad');c.res.mana=manaNow(c)-K.realCost}
+ const EM=derived(c).energyMax;if(K.ult&&c.res.energy<EM)return toast(`A Ultimate precisa de ${EM} de Energia.`,'bad');
+ const payMana=K.manaManual?K.realCost:(K.ult||a.slot==='basico'||a.noMana?0:K.realCost);if(payMana&&manaNow(c)<payMana)return toast('Mana insuficiente.','bad');
+ if(K.ult)c.res.energy=0;if(payMana)c.res.mana=manaNow(c)-payMana;
  const d=a.d||{};useAction(d.acao_livre?'livre':d.acao_mov?'movimento':d.reacao?'reacao':'padrao');
  if(a.effect==='escudo'){c.res.shield=Math.max(num(c.res.shield),v)}
  const what=a.effect==='dano'?`${v} de dano ${a.dmgType==='magico'?'mágico':'físico'}`:a.effect==='cura'?`${v} de cura`:a.effect==='escudo'?`Escudo de ${v}`:a.effect==='movimento'?`${K.meters} m de deslocamento`:a.effect==='buff'||a.effect==='debuff'?`${fmt(K.choices)} escolha(s) de ${R2.EFFECTS[a.effect].name}`:`DT ${K.dt}`;
- logC(`${a.name||R2.SLOT[a.slot].name}: ${what}${K.ult?' (Ultimate)':K.realCost?` · −${K.realCost} Mana`:''}`,'cast');commit();
+ logC(`${a.name||R2.SLOT[a.slot].name}: ${what}${K.ult?' (Ultimate)':''}${payMana?` · −${payMana} Mana`:''}`,'cast');commit();
  if(window.RxFx)RxFx.cast(a.slot,a.effect);
  if(K.hit!=null&&a.effect!=='movimento'&&a.effect!=='escudo'&&a.effect!=='cura'&&a.effect!=='buff'&&window.RxDice)RxDice.roll(d20(K.hit),`ACERTO · ${(a.name||'').toUpperCase()}`,{note:`Se acertar: ${what}${K.conds?` · DT ${K.dt}`:''}`,crit:K.crit});
  else toast(`${a.name}: ${what}`,'good')
@@ -162,7 +163,7 @@ ACT['take-dmg']=()=>{
  if(defend||prot)useAction('reacao');
  const dmg=Math.max(0,v-rd);let left=dmg;const sh=num(c.res.shield);const absorbed=Math.min(sh,left);c.res.shield=sh-absorbed;left-=absorbed;
  c.res.hp=Math.max(0,hpNow(c)-left);
- let extra='';if((defend||prot)&&dmg===0){c.res.energy=Math.min(10,c.res.energy+1);extra=' · RD anulou tudo: +1 Energia'}
+ let extra='';if((defend||prot)&&dmg===0){c.res.energy=Math.min(derived(c).energyMax,c.res.energy+1);extra=' · RD anulou tudo: +1 Energia'}
  c.ui.dmgIn=0;logC(`Recebeu ${v} ${type} − RD ${rd} = ${dmg}${absorbed?` (${absorbed} no Escudo)`:''}${extra}`,'hit');commit();
  toast(`${dmg} de dano${absorbed?` · Escudo absorveu ${absorbed}`:''}${extra}`,dmg?'bad':'good');if(c.res.hp===0)toast('HP zerado!','bad')
 };

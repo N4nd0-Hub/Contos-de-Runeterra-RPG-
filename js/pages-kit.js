@@ -8,7 +8,7 @@ registerPage('kit',{label:'Kit',icon:'kit',render:renderKit});
 function renderKit(c){
  const B=phBudget(c),S=SYSTEMS[sheetMode(c)];
  const bySlot=k=>c.kit.filter(a=>a.slot===k);
- const tiles=['passiva','basico','q','w','e','r'].map(k=>{const a=bySlot(k)[0],s=R2.SLOT[k];return `<button type="button" class="kslot s-${k} ${a?'filled':''}" data-act="${a?'ab-edit':'ab-new'}" ${a?`data-id="${a.id}"`:`data-slot="${k}"`}><span class="kkey">${s.key}</span>${icon(s.icon)}<b>${a?esc(a.name):s.name}</b><small>${a?(()=>{const K=abilityCalc(c,a);return K.ult?'10 Energia':K.passive?'Passiva':k==='basico'?'Sem custo':K.minCost+' Mana'})():'Criar'}</small></button>`}).join('');
+ const tiles=['passiva','basico','q','w','e','r'].map(k=>{const a=bySlot(k)[0],s=R2.SLOT[k];return `<button type="button" class="kslot s-${k} ${a?'filled':''}" data-act="${a?'ab-edit':'ab-new'}" ${a?`data-id="${a.id}"`:`data-slot="${k}"`}><span class="kkey">${s.key}</span>${icon(s.icon)}<b>${a?esc(a.name):s.name}</b><small>${a?(()=>{const K=abilityCalc(c,a);return K.ult?'Ultimate':K.passive?((a.bonuses||[]).some(b=>num(b.value))&&!a.bonusOff?'Passiva · bônus':'Passiva'):k==='basico'&&!K.manaManual?'Sem custo':K.minCost+' Mana'})():'Criar'}</small></button>`}).join('');
  const legacy=c.kit.filter(a=>a.legacy).length;
  return pageIntro('kit',S.kicker+' / 03','Kit de Habilidades','Seu kit no formato de um campeão: PH compram os descritores e a Mana decide a potência.')+
  `<div class="grid kit-top">
@@ -32,7 +32,7 @@ function abilityCard(c,a){
  const w=a.weaponId?c.academy.weapons.find(x=>x.id===a.weaponId):null;
  return `<article class="ability s-${a.slot} ${a.dmgType}">
   <header><span class="akey">${s.key}</span><div><small>${s.name} · ${E.name} ${a.dmgType==='magico'?'Mágico':'Físico'}${a.origin==='estelar'?' · Dom estelar':''}${w?' · '+esc(w.name):''}</small><h3>${esc(a.name||s.name)}</h3></div>
-   <div class="a-meta"><span class="pill">${icon('ph')}${K.phCost} PH${K.ult&&K.raw?` <i>(${K.raw} − 8 grátis)</i>`:''}${K.passive&&K.raw?` <i>(${K.raw} ÷ 2)</i>`:''}</span>${K.ult?`<span class="pill en">${icon('energia')}10 Energia</span>`:K.passive||a.slot==='basico'?'':a.noMana?'<span class="pill">sem Mana</span>':`<span class="pill mp">${icon('mana')}${K.minCost}${a.noAmp?' fixo':'+'}</span>`}</div>
+   <div class="a-meta"><span class="pill">${icon('ph')}${K.phCost} PH${K.ult&&K.raw?` <i>(${K.raw} − 8 grátis)</i>`:''}${K.passive&&K.raw?` <i>(${K.raw} ÷ 2)</i>`:''}</span>${K.ult?`<span class="pill en">${icon('energia')}${derived(c).energyMax} Energia</span>`:''}${(K.passive||a.slot==='basico'||K.ult)&&!K.manaManual?'':a.noMana&&!K.manaManual?'<span class="pill">sem Mana</span>':`<span class="pill mp">${icon('mana')}${K.minCost}${a.noAmp?' fixo':K.manaManual?'':'+'}</span>`}</div>
    <div class="a-btns"><button class="icon-btn" data-act="ab-edit" data-id="${a.id}" title="Editar">${icon('pencil')}</button><button class="icon-btn" data-act="ab-dup" data-id="${a.id}" title="Duplicar">${icon('copy')}</button><button class="icon-btn" data-act="ab-del" data-id="${a.id}" title="Excluir">${icon('trash-2')}</button></div></header>
   ${a.legacy?`<p class="warn sm">${icon('circle-alert')}${esc(a.legacy)}</p>`:''}
   <div class="a-body">
@@ -45,11 +45,13 @@ function abilityCard(c,a){
     ${K.pen?stat('Penetração',K.pen,{ic:'dano-fisico',sub:'RD ignorada'}):''}${K.crit<20?stat('Crítico',K.crit+'–20',{ic:'d20'}):''}
    </div>
    ${steps.length>1?`<div class="mana-table">${steps.map(m=>`<span><small>${m} Mana</small><b>${valAt(m)}</b></span>`).join('')}</div>`:''}
-   <div class="tags">${descTags(c,a)||'<span class="tag muted">Sem descritores</span>'}</div>
+   <div class="tags">${descTags(c,a)||'<span class="tag muted">Sem descritores</span>'}${K.manaManual?`<span class="tag used">Mana manual: ${K.minCost}</span>`:''}${K.phManual?`<span class="tag used">PH manual: ${K.phCost}</span>`:''}</div>
+   ${a.slot==='passiva'&&(a.bonuses||[]).some(b=>num(b.value))?`<div class="a-bonus ${a.bonusOff?'off':''}">${icon('buff')}<span><small>Bônus na ficha</small><b>${bonusText(a.bonuses)}</b></span><button class="btn sm ${a.bonusOff?'':'on'}" data-act="ab-bonus-toggle" data-id="${a.id}">${a.bonusOff?'Desligado':'Ativo'}</button></div>`:''}
    ${a.desc?`<p class="a-desc">${esc(a.desc).replace(/\n/g,'<br>')}</p>`:''}
    ${K.warn.length?`<ul class="warn-list">${K.warn.map(x=>`<li>${icon('circle-alert')}${esc(x)}</li>`).join('')}</ul>`:''}
   </div></article>`
 }
+ACT['ab-bonus-toggle']=el=>{const a=current().kit.find(x=>x.id===el.dataset.id);a.bonusOff=!a.bonusOff;commit();toast(a.bonusOff?'Bônus da passiva desligados.':'Bônus da passiva aplicados na ficha.','good')};
 ACT['ab-del']=el=>{const c=current(),a=c.kit.find(x=>x.id===el.dataset.id);if(!confirm(`Excluir "${a.name}"?`))return;c.kit=c.kit.filter(x=>x!==a);commit()};
 ACT['ab-dup']=el=>{const c=current(),a=c.kit.find(x=>x.id===el.dataset.id);const b=JSON.parse(JSON.stringify(a));b.id=uid();b.name=(a.name||'Habilidade')+' (cópia)';b.slot='extra';c.kit.push(b);commit()};
 ACT['ab-new']=el=>openBuilder({id:uid(),slot:el.dataset.slot||'q',name:'',dmgType:'fisico',effect:el.dataset.slot==='passiva'?'dano':'dano',d:{},opt:{},desc:'',origin:sheetMode()==='star-guardian'&&el.dataset.origin?'estelar':'',weaponId:el.dataset.weapon||''},true);
@@ -73,14 +75,22 @@ function openBuilder(a,isNew){
     ${sheetMode(c)==='star-guardian'?`<label class="check"><input type="checkbox" id="bStar" ${a.origin==='estelar'?'checked':''}> Dom da Primeira Estrela (aparece na constelação)</label>`:''}
     <div class="field full"><label>Descrição</label><textarea class="input" id="bDesc" placeholder="Como a habilidade aparece, gatilho da passiva, detalhes combinados com o Mestre...">${esc(a.desc)}</textarea></div>
    </div>
+   <div class="b-manual"><h3 class="sub">${icon('settings-2')}Custo manual <small>vazio = calculado pela regra</small></h3>
+    <div class="form-grid"><div class="field"><label>Custo de Mana</label><input class="input" type="number" min="0" step="5" id="bManaOv" value="${a.manaOverride??''}" placeholder="automático"></div>
+     <div class="field"><label>Custo em PH</label><input class="input" type="number" min="0" id="bPhOv" value="${a.phOverride??''}" placeholder="automático"></div></div></div>
+   <div class="b-bonus" id="bBonusWrap" ${a.slot==='passiva'?'':'hidden'}><h3 class="sub">${icon('buff')}Bônus na ficha <small>a Passiva soma isso direto nos números do personagem</small></h3>
+    ${bonusEditor(a.bonuses,'bBonus')}
+    <label class="check"><input type="checkbox" id="bBonusOn" ${a.bonusOff?'':'checked'}> Bônus ativos (desmarque para passivas condicionais)</label></div>
    <h3 class="sub">${icon('ph')}Descritores</h3>
    <div class="b-desc" id="bDescList"></div>
   </div>
   <aside class="b-preview" id="bPreview"></aside>
  </div>`,mount=>{
-  const sync=()=>{draft.name=$('#bName').value;draft.slot=$('#bSlot').value;draft.desc=$('#bDesc').value;draft.noAmp=$('#bNoAmp').checked;draft.noMana=$('#bNoMana').checked;if($('#bWeapon')){draft.weaponId=$('#bWeapon').value;draft.formId=$('#bForm').value}if($('#bStar'))draft.origin=$('#bStar').checked?'estelar':''};
+  const sync=()=>{draft.name=$('#bName').value;draft.slot=$('#bSlot').value;draft.desc=$('#bDesc').value;draft.noAmp=$('#bNoAmp').checked;draft.noMana=$('#bNoMana').checked;
+   const mo=$('#bManaOv').value.trim(),po=$('#bPhOv').value.trim();draft.manaOverride=mo===''?'':Math.max(0,Number(mo));draft.phOverride=po===''?'':Math.max(0,Number(po));
+   draft.bonuses=readBonuses('bBonus');draft.bonusOff=!$('#bBonusOn').checked;$('#bBonusWrap').hidden=draft.slot!=='passiva';if($('#bWeapon')){draft.weaponId=$('#bWeapon').value;draft.formId=$('#bForm').value}if($('#bStar'))draft.origin=$('#bStar').checked?'estelar':''};
   mount.addEventListener('input',e=>{if(e.target.closest('#bDescList'))return;sync();if(e.target.id==='bWeapon'){$('#bForm').innerHTML=formOptions(draft)}if(e.target.id!=='bName'&&e.target.id!=='bDesc')paintBuilder();else paintPreview()});
-  mount.addEventListener('click',e=>{const b=e.target.closest('#bType button,#bEffect button');if(b){const host=b.parentElement;host.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));if(host.id==='bType')draft.dmgType=b.dataset.v;else draft.effect=b.dataset.v;paintBuilder()}});
+  mount.addEventListener('click',e=>{if(e.target.closest('[data-act=bonus-add],[data-act=bonus-del]')){setTimeout(()=>{sync();paintPreview()},0)}const b=e.target.closest('#bType button,#bEffect button');if(b){const host=b.parentElement;host.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));if(host.id==='bType')draft.dmgType=b.dataset.v;else draft.effect=b.dataset.v;paintBuilder()}});
   mount.addEventListener('change',e=>{const s=e.target.closest('[data-dopt]');if(s){draft.opt[s.dataset.dopt]=s.value;paintPreview()}const ck=e.target.closest('[data-dck]');if(ck){toggleDesc(ck.dataset.dck,ck.checked?1:0)}});
   paintBuilder()
  },'wide')
@@ -105,13 +115,14 @@ function paintPreview(){
  $('#bPreview').innerHTML=`<div class="pv-card s-${a.slot} ${a.dmgType}"><span class="akey">${R2.SLOT[a.slot].key}</span><small>${R2.SLOT[a.slot].name} · ${E.name} ${a.dmgType==='magico'?'Mágico':'Físico'}</small><h3>${esc(a.name||'Sem nome')}</h3>
   <div class="pv-big">${icon(E.icon)}<b>${K.ult?(a.effect==='escudo'?K.value:a.effect==='buff'||a.effect==='debuff'?fmt(K.choices)+' esc.':K.value):steps.length?v(K.minCost):a.slot==='basico'?K.value:K.passive?(K.value?'+'+K.value:'—'):v(K.minCost)}</b><small>${K.ult?'Ultimate · 10 Energia':K.passive?'Passiva':a.slot==='basico'?'Ataque Básico':a.noMana?'sem Mana':`com ${K.minCost} de Mana`}</small></div>
   <div class="pv-grid">
-   <span><small>PH</small><b class="${left<0?'bad':''}">${K.phCost}</b></span>
-   <span><small>Custo mínimo</small><b>${K.ult?'10 En.':K.passive||a.slot==='basico'?'0':K.minCost}</b></span>
+   <span><small>PH${K.phManual?' (manual)':''}</small><b class="${left<0?'bad':''}">${K.phCost}</b></span>
+   <span><small>Custo${K.manaManual?' (manual)':' mínimo'}</small><b>${K.ult?'Ult.'+(K.manaManual?' + '+K.minCost:''):(K.passive||a.slot==='basico')&&!K.manaManual?'0':K.minCost}</b></span>
    <span><small>DT</small><b>${K.dt}</b></span>
    <span><small>Acerto</small><b>${K.hit==null?'auto':sgn(K.hit)}</b></span>
   </div>
   ${K.cut?`<p class="hint">${icon('runas')}Espírito Arcano: custa ${Math.round(K.cut*100)}% menos Mana e cada 10 de potência rende +${K.per10}.</p>`:''}
   ${steps.length>1?`<div class="mana-table">${steps.map(m=>`<span><small>${m}</small><b>${v(m)}</b></span>`).join('')}</div><p class="hint">Mana da potência limitada a ${K.limit} além dos descritores no Nível ${c.level}.</p>`:''}
+  ${a.slot==='passiva'&&(a.bonuses||[]).some(b=>num(b.value))?`<p class="pv-bonus ${a.bonusOff?'off':''}">${icon('buff')}${a.bonusOff?'Desligados: ':'Na ficha: '}${bonusText(a.bonuses)}</p>`:''}
   <p class="pv-left ${left<0?'bad':''}">${icon('ph')}Sobram <b>${left}</b> PH de ${B.total}${K.ult?' (8 grátis já descontados)':''}</p>
   ${K.warn.length?`<ul class="warn-list">${K.warn.map(x=>`<li>${icon('circle-alert')}${esc(x)}</li>`).join('')}</ul>`:''}
  </div>
@@ -119,6 +130,7 @@ function paintPreview(){
 }
 ACT['ab-save']=()=>{
  const c=current();draft.name=$('#bName').value.trim()||R2.SLOT[draft.slot].name;delete draft.legacy;
+ draft.bonuses=readBonuses('bBonus');draft.bonusOff=!$('#bBonusOn').checked;{const mo=$('#bManaOv').value.trim(),po=$('#bPhOv').value.trim();draft.manaOverride=mo===''?'':Math.max(0,Number(mo));draft.phOverride=po===''?'':Math.max(0,Number(po))}
  if(['passiva','basico','q','w','e','r'].includes(draft.slot)){const other=c.kit.find(x=>x.slot===draft.slot&&x.id!==draft.id);if(other&&!confirm(`${R2.SLOT[draft.slot].name} já é "${other.name}". Mover a antiga para Extra?`))return;if(other)other.slot='extra'}
  const i=c.kit.findIndex(x=>x.id===draft.id);if(i>=0)c.kit[i]=draft;else c.kit.push(draft);
  closeModal();commit();toast('Habilidade salva.','good')

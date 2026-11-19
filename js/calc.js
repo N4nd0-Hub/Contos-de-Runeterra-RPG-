@@ -3,7 +3,14 @@
    ========================================================================== */
 'use strict';
 const ATTR_STATS=R2.ATTRS.map(a=>a.k);
-const BONUS_STATS={vida:'Vida',poder:'Poder',precisao:'Precisão',destreza:'Destreza',resistencia:'Resistência',espirito:'Espírito',hp:'HP Máximo',mana:'Mana Máxima',rd:'RD',rdMagic:'RD contra Mágico',move:'Movimento (m)',dmg:'Dano',acerto:'Acerto',defesa:'Defesa',init:'Iniciativa',manaRegen:'Recuperação de Mana'};
+const BONUS_STATS={hp:'HP Máximo',mana:'Mana Máxima',manaRegen:'Recuperação de Mana',rd:'RD',rdMagic:'RD contra Mágico',dmg:'Dano (físico e mágico)',dmgFis:'Dano físico',dmgMag:'Dano mágico',cura:'Cura',move:'Movimento (m)',acerto:'Acerto',defesa:'Defesa',aparar:'Aparar',vontade:'Vontade',resistTest:'Teste de Resistência',init:'Iniciativa',vida:'Vida',poder:'Poder',precisao:'Precisão',destreza:'Destreza',resistencia:'Resistência',espirito:'Espírito'};
+/* ---------- fórmulas da ficha (editáveis por personagem) ---------- */
+const FORMULA_DEFAULTS={hpPerVida:50,manaBase:40,manaPerEsp:10,regenBase:10,regenPerEsp:1,dbPerPoder:5,dbPerEsp:5,curaPerAttr:5,rdPerRes:2,moveBase:10,movePerDes:2.5,energyMax:10};
+const FORMULA_LABELS={hpPerVida:['HP por ponto de Vida','Vida × 50'],manaBase:['Mana base','40'],manaPerEsp:['Mana por Espírito','Espírito × 10'],regenBase:['Recuperação base por rodada','10'],regenPerEsp:['Recuperação por Espírito','+ Espírito × 1'],dbPerPoder:['Dano Base Físico por Poder','Poder × 5'],dbPerEsp:['Dano Base Mágico por Espírito','Espírito × 5'],curaPerAttr:['Cura Base por atributo','Espírito/Poder × 5'],rdPerRes:['RD por Resistência','Resistência × 2'],moveBase:['Movimento base (m)','10 m'],movePerDes:['Movimento por Destreza (m)','Destreza × 2,5'],energyMax:['Energia máxima','10']};
+const MANUAL_LABELS={hp:'HP Máximo',mana:'Mana Máxima',manaRegen:'Recuperação de Mana',rd:'RD',move:'Movimento (m)',dmg:'Dano (físico e mágico)',acerto:'Acerto',defesa:'Defesa'};
+function formula(c=current()){const f=c.formula||{};const out={...FORMULA_DEFAULTS};for(const k in FORMULA_DEFAULTS)if(f[k]!==''&&f[k]!=null&&Number.isFinite(Number(f[k])))out[k]=Number(f[k]);out.roleHp=f.roleHp!==''&&f.roleHp!=null&&Number.isFinite(Number(f.roleHp))?Number(f.roleHp):null;out.manual=f.manual||{};return out}
+function formulaCustom(c=current()){const f=c.formula||{};return Object.keys(FORMULA_DEFAULTS).some(k=>f[k]!==''&&f[k]!=null&&Number(f[k])!==FORMULA_DEFAULTS[k])||(f.roleHp!==''&&f.roleHp!=null)||Object.values(f.manual||{}).some(v=>num(v))}
+function passiveSources(c=current()){return c.kit.filter(a=>a.slot==='passiva'&&a.bonusOff!==true&&(a.bonuses||[]).some(b=>num(b.value))&&(typeof abilityAvailable!=='function'||abilityAvailable(c,a)))}
 const ARMOR={'':{name:'Sem armadura',rd:0,move:0},leve:{name:'Leve',rd:1,move:0},media:{name:'Média',rd:2,move:-1},pesada:{name:'Pesada',rd:4,move:-3}};
 const sumRange=(f,a,b)=>{let s=0;for(let i=a;i<=b;i++)s+=f(i);return s};
 
@@ -16,6 +23,8 @@ function gearBonuses(c=current()){
  const armor=c.items.find(i=>i.equipped!==false&&i.cat==='armadura'&&i.armorType);
  if(armor){add('rd',ARMOR[armor.armorType].rd);add('move',ARMOR[armor.armorType].move)}
  if(sheetMode(c)==='battle-academia'){const w=activeWeapon(c);if(w&&w.equipped!==false){for(const b of w.bonuses||[])add(b.stat,b.value);for(const f of weaponForms(w,c))for(const b of f.bonuses||[])add(b.stat,b.value)}}
+ for(const a of passiveSources(c))for(const b of a.bonuses)add(b.stat,b.value);
+ const man=(c.formula||{}).manual||{};for(const k in man)add(k,man[k]);
  return out
 }
 function runesActive(c=current()){return sheetMode(c)!=='star-guardian'}
@@ -68,22 +77,23 @@ function condMods(c=current()){
  return m
 }
 function derived(c=current()){
- const A=Object.fromEntries(R2.ATTRS.map(a=>[a.k,attr(c,a.k)])),g=gearBonuses(c),rb=runeBonuses(c),R=rb.out,role=R2.ROLES[c.identity.role];
+ const A=Object.fromEntries(R2.ATTRS.map(a=>[a.k,attr(c,a.k)])),g=gearBonuses(c),rb=runeBonuses(c),R=rb.out,F=formula(c),role0=R2.ROLES[c.identity.role];
+ const role={...role0,hp:F.roleHp??role0.hp};
  const prof=k=>{const p=c.profs.find(x=>x.k===k);return p?num(p.rank)*2:0};
  const espMana=A.espirito+(R.espiritoMana||0);
- let manaMax=40+espMana*10+(g.mana||0)+(R.mana||0);
- let hpMax=role.hp+A.vida*50+(g.hp||0)+(R.hp||0);if(R.hpPct)hpMax=Math.round(hpMax*(1+R.hpPct/100));
+ let manaMax=Math.round(F.manaBase+espMana*F.manaPerEsp+(g.mana||0)+(R.mana||0));
+ let hpMax=Math.round(role.hp+A.vida*F.hpPerVida+(g.hp||0)+(R.hp||0));if(R.hpPct)hpMax=Math.round(hpMax*(1+R.hpPct/100));
  const manaNow=c.res.mana==null?manaMax:c.res.mana;
  let espDmg=A.espirito;const tr=runeRank(c,'Transcender da Tempestade');let transcBonus=0;if(tr===3&&manaNow>manaMax/2){espDmg+=1;transcBonus=1}
  const route=c.combat.route,cm=condMods(c);
- let move=10+A.destreza*2.5+(g.move||0)+(R.move||0);if(route==='veloz'&&c.combat.active)move*=1.5;if(cm.movePct)move*=1+cm.movePct;if(cm.moveZero)move=0;
- let rd=A.resistencia*2+(g.rd||0)+(R.rd||0);if(route==='poderosa'&&c.combat.active)rd+=Math.floor(A.destreza/2);
- const dbFis=A.poder*5+(R.dbFis||0)+(g.dmg||0),dbMag=espDmg*5+(R.dbMag||0)+(g.dmg||0);
+ let move=F.moveBase+A.destreza*F.movePerDes+(g.move||0)+(R.move||0);if(route==='veloz'&&c.combat.active)move*=1.5;if(cm.movePct)move*=1+cm.movePct;if(cm.moveZero)move=0;
+ let rd=Math.round(A.resistencia*F.rdPerRes+(g.rd||0)+(R.rd||0));if(route==='poderosa'&&c.combat.active)rd+=Math.floor(A.destreza/2);
+ const dbFis=Math.round(A.poder*F.dbPerPoder+(R.dbFis||0)+(g.dmg||0)+(g.dmgFis||0)),dbMag=Math.round(espDmg*F.dbPerEsp+(R.dbMag||0)+(g.dmg||0)+(g.dmgMag||0));
  const routeInit=c.combat.active?(R2.ROUTES[route]?.init||0):0;
- return {A,role,hpMax,manaMax,manaNow,manaRegen:10+espMana+(g.manaRegen||0),energyMax:10,
-  dbFis,dbMag,curaMag:espDmg*5,curaFis:A.poder*5,rd,rdMagic:rd+(g.rdMagic||0)+(R.rdMagic||0),move:Math.max(0,Math.round(move*10)/10),
-  acerto:A.precisao+(g.acerto||0)+cm.acerto,defesa:A.destreza+prof('esquiva')+(g.defesa||0)+cm.defesa+(route==='veloz'&&c.combat.active?5:0),aparar:A.precisao+prof('aparar'),
-  vontade:espMana+prof('vontade'),resist:A.resistencia+prof('fortitude')+cm.resist,init:A.destreza+(g.init||0)+routeInit,
+ return {A,role,F,hpMax,manaMax,manaNow,manaRegen:Math.round(F.regenBase+espMana*F.regenPerEsp+(g.manaRegen||0)),energyMax:Math.max(1,Math.round(F.energyMax)),
+  dbFis,dbMag,curaMag:Math.round(espDmg*F.curaPerAttr+(g.cura||0)),curaFis:Math.round(A.poder*F.curaPerAttr+(g.cura||0)),rd,rdMagic:rd+(g.rdMagic||0)+(R.rdMagic||0),move:Math.max(0,Math.round(move*10)/10),
+  acerto:A.precisao+(g.acerto||0)+cm.acerto,defesa:A.destreza+prof('esquiva')+(g.defesa||0)+cm.defesa+(route==='veloz'&&c.combat.active?5:0),aparar:A.precisao+prof('aparar')+(g.aparar||0),
+  vontade:espMana+prof('vontade')+(g.vontade||0),resist:A.resistencia+prof('fortitude')+cm.resist+(g.resistTest||0),init:A.destreza+(g.init||0)+routeInit,
   dtFis:10+A.poder,dtMag:10+espDmg,dtRes:10+A.resistencia,transcBonus,cm,runeNotes:rb.notes,gear:g}
 }
 function profBonus(c,p){const d=R2.PROF[p.k];const attrB=d&&d.attr?attr(c,d.attr):0;return {rank:num(p.rank)*2,attr:attrB,total:num(p.rank)*2+attrB+(p.k==='percepcao'?(runeBonuses(c).out.percepcao||0):0)}}
@@ -120,14 +130,16 @@ function abilityCalc(c,a,mana=null){
  const fixMax=Math.floor((10+c.level*2)/5);if(units('fixo')>fixMax)warn.push(`Dano/Cura Fixo passa do máximo (+${10+c.level*2}).`);
  raw=Math.max(0,raw);
  let phCost=passive?Math.ceil(raw/2):ult?Math.max(0,raw-8):raw;
+ const phManual=a.phOverride!==''&&a.phOverride!=null&&Number.isFinite(Number(a.phOverride));if(phManual)phCost=Math.max(0,Number(a.phOverride));
+ const manaManual=a.manaOverride!==''&&a.manaOverride!=null&&Number.isFinite(Number(a.manaOverride));
  const fixed=units('fixo')*5,isMag=a.dmgType==='magico';
  const db=isMag?D.dbMag:D.dbFis,attrDT=units('dt_res')?D.A.resistencia:(isMag?(D.A.espirito+D.transcBonus):D.A.poder);
  const per10=abilityPer10(c,a),cut=abilityCostCut(c,a);
- const minCost=passive||basic?0:ult?0:10+descMana,limit=R2.potencyLimit(c.level);
- const maxMana=a.noAmp?minCost:descMana+limit;
- let M=ult||passive||basic?0:clamp(mana==null?(num(a.mana)||minCost):mana,minCost,Math.max(minCost,maxMana));
+ const minCost=manaManual?Math.max(0,Number(a.manaOverride)):passive||basic?0:ult?0:10+descMana,limit=R2.potencyLimit(c.level);
+ const maxMana=a.noAmp?minCost:Math.max(minCost,minCost+limit-10);
+ let M=(ult||passive||basic)&&!manaManual?0:clamp(mana==null?(num(a.mana)||minCost):mana,minCost,Math.max(minCost,maxMana));
  if(a.noMana){M=0}
- const blocks=ult||passive||basic?0:a.noMana?1:Math.max(1,(M-descMana)/10);
+ const blocks=ult||passive||basic?0:a.noMana?1:1+Math.max(0,(M-minCost)/10);
  const extraBlocks=ult||passive||basic||a.noMana?0:Math.max(0,(M-minCost)/10);
  let base=basic?db+fixed:passive?fixed:ult?db+150+fixed:db+per10*blocks+fixed;
  if(a.noMana&&!ult&&!passive&&!basic)base=db+15+fixed;
@@ -141,7 +153,7 @@ function abilityCalc(c,a,mana=null){
  const hitAttr=units('acerto_des')?'destreza':units('acerto_esp')?'espirito':'precisao';
  const hit=units('teste_auto')?null:attr(c,hitAttr)+D.cm.acerto+(units('multiataque')?0:0);
  const crit=20-units('perigosa');
- return {ult,passive,basic,raw,phCost,descMana,minCost,maxMana,limit,mana:M,realCost,cut,per10,blocks,extraBlocks,db,fixed,value,choices,meters,dt,hit,hitAttr,crit,conds,warn,
+ return {ult,passive,basic,raw,phCost,phManual,manaManual,descMana,minCost,maxMana,limit,mana:M,realCost,cut,per10,blocks,extraBlocks,db,fixed,value,choices,meters,dt,hit,hitAttr,crit,conds,warn,
   pen:units('penetracao')*2,energy:ult?10:0}
 }
 function routeAdjust(c,v){
